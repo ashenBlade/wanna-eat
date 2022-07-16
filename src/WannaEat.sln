@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WannaEat.Web", "WannaEat.Web\WannaEat.Web.csproj", "{B4013388-AA6F-41F1-93EF-CA05D23B087D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WannaEat.Infrastructure", "WannaEat.Infrastructure\WannaEat.Infrastructure.csproj", "{4A7F3874-B927-4D83-965E-79C5CC4F4A9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WannaEat.Domain", "WannaEat.Domain\WannaEat.Domain.csproj", "{A519236E-8547-46FC-BE57-D6D92F17E582}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B4013388-AA6F-41F1-93EF-CA05D23B087D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4013388-AA6F-41F1-93EF-CA05D23B087D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4013388-AA6F-41F1-93EF-CA05D23B087D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4013388-AA6F-41F1-93EF-CA05D23B087D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A7F3874-B927-4D83-965E-79C5CC4F4A9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A7F3874-B927-4D83-965E-79C5CC4F4A9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A7F3874-B927-4D83-965E-79C5CC4F4A9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A7F3874-B927-4D83-965E-79C5CC4F4A9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A519236E-8547-46FC-BE57-D6D92F17E582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A519236E-8547-46FC-BE57-D6D92F17E582}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A519236E-8547-46FC-BE57-D6D92F17E582}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A519236E-8547-46FC-BE57-D6D92F17E582}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
