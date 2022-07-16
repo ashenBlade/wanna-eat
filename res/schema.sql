@@ -1,6 +1,7 @@
 CREATE TABLE foods(
     id SERIAL,
     name VARCHAR,
+    image_url VARCHAR,
     kcal FLOAT,
     protein FLOAT,
     fat FLOAT,
@@ -44,22 +45,20 @@ CREATE TABLE foods(
 );
 
 CREATE TABLE products(
-    id SERIAL,
-    food_id INT,
+    id INT,
     is_foundational BOOLEAN,
     CONSTRAINT products_pk PRIMARY KEY (id),
-    CONSTRAINT products_food_fk FOREIGN KEY (food_id) REFERENCES foods(id) ON DELETE CASCADE ,
-    CONSTRAINT food_id_not_null CHECK ( food_id IS NOT NULL ),
+    CONSTRAINT products_food_fk FOREIGN KEY (id) REFERENCES foods(id) ON DELETE CASCADE ,
+    CONSTRAINT food_id_not_null CHECK ( id IS NOT NULL ),
     CONSTRAINT is_foundational_specified CHECK ( is_foundational IS NOT NULL )
 );
 
 CREATE TABLE dishes(
-    id SERIAL,
-    food_id INT,
+    id INT,
     recipe TEXT,
     CONSTRAINT dishes_pk PRIMARY KEY (id),
-    CONSTRAINT food_id_fk FOREIGN KEY (food_id) REFERENCES foods(id) ON DELETE CASCADE ,
-    CONSTRAINT food_id_specified CHECK ( food_id IS NOT NULL ),
+    CONSTRAINT food_id_fk FOREIGN KEY (id) REFERENCES foods(id) ON DELETE CASCADE ,
+    CONSTRAINT food_id_specified CHECK ( id IS NOT NULL ),
     CONSTRAINT recipe_not_null CHECK ( recipe IS NOT NULL )
 );
 
