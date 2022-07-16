@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WannaEat", "WannaEat\WannaEat.csproj", "{B4013388-AA6F-41F1-93EF-CA05D23B087D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WannaEat.Web", "WannaEat.Web\WannaEat.Web.csproj", "{B4013388-AA6F-41F1-93EF-CA05D23B087D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

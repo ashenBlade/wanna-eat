@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace WannaEat.Controllers;
+namespace WannaEat.Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]

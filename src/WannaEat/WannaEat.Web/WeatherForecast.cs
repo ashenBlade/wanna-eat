@@ -1,4 +1,4 @@
-namespace WannaEat;
+namespace WannaEat.Web;
 
 public class WeatherForecast
 {
