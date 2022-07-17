@@ -3,14 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WannaEat.Web.Models;
 
-[Table("cooking_appliances")]
 public class CookingAppliance
 {
-    [Column("id")]
+    [Key]
     public int Id { get; set; }
-    [Column("name")]
     [Required]
     public string Name { get; set; }
-    [Column("image_url")]
     public string? ImageUrl { get; set; }
+    public IList<Dish> UsedInCooking { get; set; }
 }

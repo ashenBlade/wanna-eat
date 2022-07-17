@@ -12,4 +12,13 @@ public class WannaEatDbContext: DbContext
     public WannaEatDbContext(DbContextOptions<WannaEatDbContext> options)
     :base(options)
     { }
+
+    protected override void OnModelCreating(ModelBuilder model)
+    {
+        base.OnModelCreating(model);
+        model.Entity<Dish>()
+             .HasMany(d => d.RequiredToCook)
+             .WithMany(c => c.UsedInCooking);
+        
+    }
 }
