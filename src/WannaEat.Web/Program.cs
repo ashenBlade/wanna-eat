@@ -1,8 +1,12 @@
+using WannaEat.Web.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<WannaEatDbContext>();
 
 var app = builder.Build();
 
