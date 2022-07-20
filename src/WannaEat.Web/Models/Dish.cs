@@ -8,4 +8,5 @@ public class Dish: Food
     [Required]
     public string Recipe { get; set; }
     public IList<CookingAppliance> RequiredToCook { get; set; }
+    public ICollection<DishProduct> ConsistsOf { get; set; }
 }

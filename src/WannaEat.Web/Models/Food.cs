@@ -11,7 +11,6 @@ public class Food
     [Required]
     public string Name { get; set; }
     
-    [Required(AllowEmptyStrings = true)]
     public string? ImageUrl { get; set; }
     
     [Required]
