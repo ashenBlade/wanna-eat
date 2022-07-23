@@ -1,4 +1,4 @@
-class CookingAppliance {
-    constructor(readonly id: number, readonly name: string) {
-    }
+export interface CookingAppliance {
+    readonly id: number
+    readonly name: string
 }

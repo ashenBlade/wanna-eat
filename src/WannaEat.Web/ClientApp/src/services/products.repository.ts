@@ -1,14 +1,12 @@
 import {Product} from "../entities/product";
 
-interface IProductRepository {
+export interface IProductRepository {
     getProductsAsync(pageNumber: number, pageSize: number): Promise<Product[]>
     getProductById(id: number): Promise<Product | null>
 }
 
-class ProductRepository implements IProductRepository {
-    constructor(readonly serverAddress: string) {
-    }
-    
+export class ProductRepository implements IProductRepository {
+  
     getProductById(id: number): Promise<Product | null> {
         return Promise.resolve(null);
     }

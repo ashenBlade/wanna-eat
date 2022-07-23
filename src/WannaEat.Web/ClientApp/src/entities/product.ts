@@ -1,4 +1,4 @@
-export class Product {
-    constructor(readonly name: string, readonly id: number) {
-    }
+export interface Product {
+    readonly id: number
+    readonly name: string
 }

@@ -1,10 +1,12 @@
 import {Product} from "../entities/product";
+import {CookingAppliance} from "../entities/cooking-appliance";
+import {Dish} from "../entities/dish";
 
-interface IFoodService {
+export interface IFoodService {
     findRelevantDishes(products: Product[], cookingAppliances: CookingAppliance[] | null): Promise<Dish[]>
 }
 
-class FoodService implements IFoodService {
+export class FoodService implements IFoodService {
     
     
     findRelevantDishes(products: Product[], cookingAppliances: CookingAppliance[] | null): Promise<Dish[]> {

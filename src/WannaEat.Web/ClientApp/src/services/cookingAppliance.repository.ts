@@ -1,9 +1,11 @@
-interface ICookingApplianceRepository {
+import {CookingAppliance} from "../entities/cooking-appliance";
+
+export interface ICookingApplianceRepository {
     getCookingAppliancesAsync(pageNumber: number, pageSize: number): Promise<CookingAppliance[]>
     getCookingApplianceById(id: number): Promise<CookingAppliance | null>
 }
 
-class CookingApplianceRepository implements ICookingApplianceRepository {
+export class CookingApplianceRepository implements ICookingApplianceRepository {
     getCookingApplianceById(id: number): Promise<CookingAppliance | null> {
         return Promise.resolve(null);
     }
