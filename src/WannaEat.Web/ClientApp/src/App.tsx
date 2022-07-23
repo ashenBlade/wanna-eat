@@ -11,11 +11,11 @@ const App = () => {
     const dishesRepo = new DishRepository()
     const foodService = new FoodService()
     return (
-        <div className={'page'}>
+        <div className={'page-layout'}>
             <div>
                 <NavBar/>
             </div>
-            <div>
+            <div className={'container-lg page'}>
                 <Products productsRepository={productsRepo} dishesRepository={dishesRepo} foodService={foodService}/>
             </div>
         </div>

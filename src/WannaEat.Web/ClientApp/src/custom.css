@@ -7,9 +7,14 @@ code {
   color: #E01A76;
 }
 
-.page {
+.page-layout {
   display: grid;
-  grid-template-rows: min-content max-content;
+  grid-template-rows: min-content auto;
+  height: 100%;
+}
+
+.page {
+  height: 100%;
 }
 
 .html, .body {

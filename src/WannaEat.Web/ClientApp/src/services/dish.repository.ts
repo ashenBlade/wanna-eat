@@ -6,11 +6,19 @@ export interface IDishRepository {
 }
 
 export class DishRepository implements IDishRepository{
+    static defaultDishes: Dish[] = [
+        {id: 1, name: 'Backed bread'},
+        {id: 2, name: 'Fried chicken'},
+        {id: 3, name: 'Rice with meat'},
+        {id: 4, name: 'Fruit salad'},
+        {id: 5, name: 'Cottage cheesecake'}
+    ]
+    
     getDishByIdAsync(id: number): Promise<Dish | null> {
-        return Promise.resolve(null);
+        return Promise.resolve(DishRepository.defaultDishes.find(d => d.id === id) ?? null);
     }
 
     getDishesAsync(pageNumber: number, pageSize: number): Promise<Dish[]> {
-        return Promise.resolve([]);
+        return Promise.resolve([...DishRepository.defaultDishes]);
     }
 }

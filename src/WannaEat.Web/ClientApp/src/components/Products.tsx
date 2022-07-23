@@ -4,6 +4,7 @@ import {Dish} from "../entities/dish";
 import {IProductRepository} from "../services/products.repository";
 import {IDishRepository} from "../services/dish.repository";
 import {IFoodService} from "../services/food.service";
+import './Produts.tsx.css';
 
 interface ProductsPageProps {
     productsRepository: IProductRepository
@@ -14,15 +15,30 @@ interface ProductsPageProps {
 const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesRepository, foodService}) => {
     const [products, setProducts] = useState<Product[]>([])
     const [dishes, setDishes] = useState<Dish[]>([])
+    
     useEffect(() => {
         productsRepository.getProductsAsync(1, 10).then(p => setProducts(p))
         dishesRepository.getDishesAsync(1, 10).then(d => setDishes(d))
     }, [])
+    
+    const searchOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const name = e.target.value
+        if (!name) {
+            productsRepository.getProductsAsync(1, 10).then(p => setProducts(p))
+            return
+        }
+        
+        productsRepository.findWithName(name).then(p => setProducts(p))
+    } 
+    
+    
     return (
         <div className={'h-100'}>
-            <div>
-                <div>
-                    This is products list:
+            <div className={'double-column h-100'}>
+                <div className={'grounded h-100'}>
+                    <div className={'p-1'}>
+                        <input className={'form-control'} type={'search'} placeholder={'Что искать?'} onChange={searchOnChange} />
+                    </div>
                     <ul>
                         {products.map(p => (
                             <li>{p.name}</li>
@@ -30,7 +46,7 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
                     </ul>
                 </div>
                 <div>
-                    This is dishes list:
+                    <div></div>
                     <ul>
                         {dishes.map(d => (
                             <li>
