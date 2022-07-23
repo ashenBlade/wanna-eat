@@ -1,13 +1,19 @@
-import {Container} from "reactstrap";
 import {useState} from "react";
+import NavBar from "./components/NavBar";
+import Products from "./components/Products";
+import {ProductRepository} from "./services/products.repository";
+import {DishRepository} from "./services/dish.repository";
+import {FoodService} from "./services/food.service";
 
 const App = () => {
-    const [number, setNumber] = useState(1)
-    
+    const productsRepo = new ProductRepository()
+    const dishesRepo = new DishRepository()
+    const foodService = new FoodService()
     return (
-        <Container onClick={() => setNumber(number + 1)}>
-            {number}
-        </Container>
+        <div>
+            <NavBar/>
+            <Products productsRepository={productsRepo} dishesRepository={dishesRepo} foodService={foodService}/>
+        </div>
     )   
 }
 
