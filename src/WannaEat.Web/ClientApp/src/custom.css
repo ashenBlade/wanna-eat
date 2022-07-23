@@ -7,6 +7,15 @@ code {
   color: #E01A76;
 }
 
+.page {
+  display: grid;
+  grid-template-rows: min-content max-content;
+}
+
+.html, .body {
+  height: 100%;
+}
+
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;

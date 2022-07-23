@@ -4,15 +4,20 @@ import Products from "./components/Products";
 import {ProductRepository} from "./services/products.repository";
 import {DishRepository} from "./services/dish.repository";
 import {FoodService} from "./services/food.service";
+import './custom.css';
 
 const App = () => {
     const productsRepo = new ProductRepository()
     const dishesRepo = new DishRepository()
     const foodService = new FoodService()
     return (
-        <div>
-            <NavBar/>
-            <Products productsRepository={productsRepo} dishesRepository={dishesRepo} foodService={foodService}/>
+        <div className={'page'}>
+            <div>
+                <NavBar/>
+            </div>
+            <div>
+                <Products productsRepository={productsRepo} dishesRepository={dishesRepo} foodService={foodService}/>
+            </div>
         </div>
     )   
 }
