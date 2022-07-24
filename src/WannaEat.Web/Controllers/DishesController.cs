@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WannaEat.Web.Dto.Dish;
 using WannaEat.Web.Models;
 using WannaEat.Web.Services;
 
@@ -21,14 +22,11 @@ public class DishesController: ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Dish>>> GetDishesPagedAsync([Required]
-                                                                           [FromQuery(Name = "s")]
-                                                                           [Range(1, int.MaxValue)]
-                                                                           int pageSize, 
-                                                                           [Required]
-                                                                           [FromQuery(Name = "n")]
-                                                                           [Range(1, int.MaxValue)]
-                                                                           int pageNumber)
+                                                                           GetDishDto dto)
     {
+        var pageNumber = dto.PageNumber;
+        var pageSize = dto.PageSize;
+        
         _logger.LogTrace("Dishes paged requested");
         var dishes = await _context.Dishes
                                    .Skip(pageSize * ( pageNumber - 1 ))
