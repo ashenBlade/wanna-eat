@@ -4,7 +4,7 @@ import {Dish} from "../entities/dish";
 import {IProductRepository} from "../services/products.repository";
 import {IDishRepository} from "../services/dish.repository";
 import {IFoodService} from "../services/food.service";
-import './Produts.tsx.css';
+import './Products.tsx.css';
 import FoodList from "./FoodList/FoodList";
 
 interface ProductsPageProps {
@@ -36,16 +36,14 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
     return (
         <div className={'h-100'}>
             <div className={'double-column h-100'}>
-                <div className={'grounded h-100'}>
-                    <div className={'p-1'}>
-                        <input className={'form-control'} type={'search'} placeholder={'Что искать?'} onChange={searchOnChange} />
+                    <div className={'pb-1'}>
+                        <input className={'form-control'} type={'search'}
+                               placeholder={'Что искать?'}
+                               onChange={searchOnChange}/>
                     </div>
-                    <FoodList foods={products}/>
-                </div>
-                <div>
                     <div></div>
-                    <FoodList foods={dishes}/>
-                </div>
+                <div className={'grounded'}><FoodList foods={products}/></div>
+                    <div className={'grounded'}><FoodList foods={dishes}/></div>
             </div>
         </div>
     );
