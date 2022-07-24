@@ -5,6 +5,7 @@ import {IProductRepository} from "../services/products.repository";
 import {IDishRepository} from "../services/dish.repository";
 import {IFoodService} from "../services/food.service";
 import './Produts.tsx.css';
+import FoodList from "./FoodList/FoodList";
 
 interface ProductsPageProps {
     productsRepository: IProductRepository
@@ -39,21 +40,11 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
                     <div className={'p-1'}>
                         <input className={'form-control'} type={'search'} placeholder={'Что искать?'} onChange={searchOnChange} />
                     </div>
-                    <ul>
-                        {products.map(p => (
-                            <li>{p.name}</li>
-                        ))}
-                    </ul>
+                    <FoodList foods={products}/>
                 </div>
                 <div>
                     <div></div>
-                    <ul>
-                        {dishes.map(d => (
-                            <li>
-                                {d.name}
-                            </li>
-                        ))}
-                    </ul>
+                    <FoodList foods={dishes}/>
                 </div>
             </div>
         </div>

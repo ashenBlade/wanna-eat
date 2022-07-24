@@ -1,4 +1,4 @@
-export interface Product {
-    readonly id: number
-    readonly name: string
+import {Food} from "./food";
+
+export interface Product extends Food {
 }
