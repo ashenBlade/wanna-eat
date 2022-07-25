@@ -9,6 +9,8 @@ public class WannaEatDbContext: DbContext
     public DbSet<Dish> Dishes => Set<Dish>();
     public DbSet<Product> Products => Set<Product>();
     public DbSet<DishProduct> DishProducts => Set<DishProduct>();
+    public DbSet<CookingAppliance> CookingAppliances => Set<CookingAppliance>();
+    public DbSet<>
     public WannaEatDbContext(DbContextOptions<WannaEatDbContext> options)
      : base(options)
     { }
