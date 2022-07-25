@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace WannaEat.Web.Models;
 
 [Owned]
+[JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
 public class Minerals
 {
     public double? Potassium { get; set; }
