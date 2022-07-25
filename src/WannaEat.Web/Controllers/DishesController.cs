@@ -1,6 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography.Xml;
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WannaEat.Web.Dto.Dish;
@@ -26,36 +24,42 @@ public class DishesController: ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Dish>>> GetDishesPagedAsync([Required]
                                                                            [FromQuery]
-                                                                           GetDishDto dto)
+                                                                           GetDishesDto dto)
     {
         var pageNumber = dto.PageNumber;
         var pageSize = dto.PageSize;
         _logger.LogInformation("Dishes paged requested");
-        IEnumerable<Dish> dishes;
         var offset = pageSize * ( pageNumber - 1 );
         var fetch = pageSize;
-        if (dto.MayContainProductsIds.Length == 0)
-        {
-            dishes = await _context.Dishes
+        
+        var dishes = await _context.Dishes
                                    .Skip(offset)
                                    .Take(fetch)
                                    .ToListAsync();
-        }
-        else
-        {
-            dishes = await _context.Dishes
-                                   .Select(d => new
-                                                {
-                                                    Dish = d,
-                                                    SatisfiedProductsCount =
-                                                        d.ConsistsOf.Count(x => dto.MayContainProductsIds.Contains(x.ProductId))
-                                                })
-                                   .OrderByDescending(x => x.SatisfiedProductsCount)
-                                   .Select(x => x.Dish)
-                                   .Skip(offset)
-                                   .Take(fetch)
-                                   .ToListAsync();
-        }
+        
+        return Ok(dishes);
+    }
+
+    [HttpGet("relevant")]
+    public async Task<ActionResult<IEnumerable<Dish>>> GetRelevantDishes([FromQuery]
+                                                                         [Required]
+                                                                         GetRelevantDishesDto dto)
+    {
+        var offset = ( dto.PageNumber - 1 ) * dto.PageSize;
+        var fetch = dto.PageSize;
+        
+        var dishes =  await _context.Dishes
+                                    .Select(d => new
+                                                 {
+                                                     Dish = d,
+                                                     SatisfiedProductsCount =
+                                                         d.ConsistsOf.Count(x => dto.MayContain.Contains(x.ProductId))
+                                                 })
+                                    .OrderByDescending(x => x.SatisfiedProductsCount)
+                                    .Select(x => x.Dish)
+                                    .Skip(offset)
+                                    .Take(fetch)
+                                    .ToListAsync();
         return Ok(dishes);
     }
 

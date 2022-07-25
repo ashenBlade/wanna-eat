@@ -4,7 +4,7 @@ using WannaEat.Web.Infrastructure.Attributes;
 
 namespace WannaEat.Web.Dto.Dish;
 
-public class GetDishDto
+public class GetDishesDto
 {
     [FromQuery(Name = "page-number")]
     [Positive]
