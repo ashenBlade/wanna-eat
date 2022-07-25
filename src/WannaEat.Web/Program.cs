@@ -28,7 +28,8 @@ app.UseRouting();
 
 
 app.MapControllers();
+app.MapControllerRoute("default", "{controller}/{action}");
 
-app.MapFallbackToFile("index.html");
+// app.MapFallbackToFile("index.html");
 
 app.Run();
