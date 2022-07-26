@@ -15,9 +15,12 @@ public class GetRelevantDishesDto
     [Positive]
     [FromQuery(Name = "page-number")]
     public int PageNumber { get; set; }
-    
+
     [Required]
     [MinLength(1)]
     [FromQuery(Name = "may-contain")]
-    public int[] MayContain { get; set; }
+    public int[] MayContain { get; set; } = null!;
+
+    [FromQuery(Name = "cook-with")]
+    public ICollection<int>? CookWithAppliancesIds { get; set; } = null!;
 }

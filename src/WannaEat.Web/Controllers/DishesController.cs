@@ -42,24 +42,30 @@ public class DishesController: ControllerBase
 
     [HttpGet("relevant")]
     public async Task<ActionResult<IEnumerable<Dish>>> GetRelevantDishes([FromQuery]
-                                                                         [Required]
                                                                          GetRelevantDishesDto dto)
     {
         var offset = ( dto.PageNumber - 1 ) * dto.PageSize;
         var fetch = dto.PageSize;
-        
-        var dishes =  await _context.Dishes
-                                    .Select(d => new
-                                                 {
-                                                     Dish = d,
-                                                     SatisfiedProductsCount =
-                                                         d.ConsistsOf.Count(x => dto.MayContain.Contains(x.ProductId))
-                                                 })
-                                    .OrderByDescending(x => x.SatisfiedProductsCount)
-                                    .Select(x => x.Dish)
-                                    .Skip(offset)
-                                    .Take(fetch)
-                                    .ToListAsync();
+        var query = (IQueryable<Dish>) _context.Dishes;
+        if (dto.CookWithAppliancesIds is not null)
+        {
+            var ids = dto.CookWithAppliancesIds.ToArray();
+            if (ids.Length != 0)
+                query = query
+                   .Where(d => d.CookingAppliances.Any(ca => ids.Contains(ca.Id)));
+        }
+        var dishes = await query
+                          .Select(d => new
+                                       {
+                                           Dish = d,
+                                           SatisfiedProductsCount =
+                                               d.ConsistsOf.Count(x => dto.MayContain.Contains(x.ProductId))
+                                       })
+                          .OrderByDescending(x => x.SatisfiedProductsCount)
+                          .Select(x => x.Dish)
+                          .Skip(offset)
+                          .Take(fetch)
+                          .ToListAsync();
         return Ok(dishes);
     }
 

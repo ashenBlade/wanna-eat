@@ -10,7 +10,6 @@ public class WannaEatDbContext: DbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<DishProduct> DishProducts => Set<DishProduct>();
     public DbSet<CookingAppliance> CookingAppliances => Set<CookingAppliance>();
-    public DbSet<>
     public WannaEatDbContext(DbContextOptions<WannaEatDbContext> options)
      : base(options)
     { }
@@ -20,8 +19,8 @@ public class WannaEatDbContext: DbContext
         base.OnModelCreating(model);
         
         model.Entity<Dish>()
-             .HasMany(d => d.RequiredToCook)
-             .WithMany(c => c.UsedInCooking);
+             .HasMany(d => d.CookingAppliances)
+             .WithMany(c => c.Dishes);
         
         model.Entity<DishProduct>(e =>
         {

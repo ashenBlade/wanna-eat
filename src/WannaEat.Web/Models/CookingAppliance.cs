@@ -10,5 +10,5 @@ public class CookingAppliance
     [Required]
     public string Name { get; set; }
     public string? ImageUrl { get; set; }
-    public IList<Dish> UsedInCooking { get; set; }
+    public IList<Dish> Dishes { get; set; }
 }
