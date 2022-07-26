@@ -52,7 +52,7 @@ public class DishesController: ControllerBase
             var ids = dto.CookWithAppliancesIds.ToArray();
             if (ids.Length != 0)
                 query = query
-                   .Where(d => d.CookingAppliances.Any(ca => ids.Contains(ca.Id)));
+                   .Where(d => d.CookingAppliances.All(ca => ids.Contains(ca.Id)));
         }
         var dishes = await query
                           .Select(d => new
