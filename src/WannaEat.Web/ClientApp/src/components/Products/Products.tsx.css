@@ -9,3 +9,13 @@
     flex-flow: column;
     justify-content: flex-end;
 }
+
+.rotate-90-hover {
+    /*transform: rotate(0);*/
+    transition: transform 0.5s ease-in-out;
+}
+
+.rotate-90-hover:hover {
+    transform: rotate(90deg);
+    transition: transform 0.5s ease-in-out;
+}
