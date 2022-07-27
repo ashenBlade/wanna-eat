@@ -1,5 +1,4 @@
 import {Product} from "../entities/product";
-import Products from "../components/Products";
 
 export interface IProductRepository {
     getProductsAsync(pageNumber: number, pageSize: number): Promise<Product[]>
