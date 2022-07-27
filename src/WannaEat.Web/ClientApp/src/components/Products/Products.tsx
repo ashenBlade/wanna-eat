@@ -16,7 +16,7 @@ interface ProductsPageProps {
 const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesRepository, foodService}) => {
     const [products, setProducts] = useState<Product[]>([])
     const [dishes, setDishes] = useState<Dish[]>([])
-    
+    const [show, setShow] = useState(false);
     useEffect(() => {
         productsRepository.getProductsAsync(1, 10).then(p => setProducts(p))
         dishesRepository.getDishesAsync(1, 10).then(d => setDishes(d))
@@ -36,14 +36,13 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
     return (
         <div className={'h-100'}>
             <div className={'double-column h-100'}>
-                <div className={'pb-1 d-flex justify-content-between align-items-center'}>
+                <div className={'p-1 d-flex justify-content-between align-items-center'}>
                     <input className={'form-control'} type={'search'}
                            placeholder={'Что искать?'}
                            onChange={searchOnChange}/>
-                        <i className={'fa fa-solid fa-gear fa-lg rotate-90-hover'}
-                           // onMouseOver={e => e.currentTarget.classList.add('asdf')}
-                           // onMouseLeave={e => e.currentTarget.classList.remove('asdf')}
-                        ></i>
+                    <div className={'ms-2'}>
+                        <i className={'fa fa-solid fa-gear fa-xl rotate-90-hover'}></i>
+                    </div>
                 </div>
                 <div/>
                 <div className={'grounded'}>
