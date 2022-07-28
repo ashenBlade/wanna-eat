@@ -36,19 +36,21 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
     return (
         <div className={'h-100'}>
             <div className={'double-column h-100'}>
-                <div className={'p-1 d-flex justify-content-between align-items-center'}>
-                    <input className={'form-control'} type={'search'}
-                           placeholder={'Что искать?'}
-                           onChange={searchOnChange}/>
-                    <div className={'ms-2'}>
-                        <i className={'fa fa-solid fa-gear fa-xl rotate-90-hover'}></i>
+                <div className={'d-flex h-25 align-items-end'}>
+                    <div className={'p-1 w-100 d-flex justify-content-between align-items-center'}>
+                        <input className={'form-control'} type={'search'}
+                               placeholder={'Что искать?'}
+                               onChange={searchOnChange}/>
+                        <div className={'ms-2'}>
+                            <i className={'fa fa-solid fa-gear fa-xl rotate-90-hover'}></i>
+                        </div>
                     </div>
                 </div>
                 <div/>
-                <div className={'grounded'}>
+                <div className={'grounded p-1 pb-2'}>
                     <FoodList foods={products}/>
                 </div>
-                <div className={'grounded'}>
+                <div className={'grounded p-1 pb-2'}>
                     <FoodList foods={dishes}/>
                 </div>
             </div>
