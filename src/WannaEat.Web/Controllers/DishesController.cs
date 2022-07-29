@@ -2,13 +2,14 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WannaEat.Web.Dto.Dish;
+using WannaEat.Web.Infrastructure.Attributes;
 using WannaEat.Web.Models;
 using WannaEat.Web.Services;
 
 namespace WannaEat.Web.Controllers;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/dishes")]
 public class DishesController: ControllerBase
 {
     private readonly WannaEatDbContext _context;
@@ -23,16 +24,21 @@ public class DishesController: ControllerBase
     
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Dish>>> GetDishesPagedAsync([Required]
-                                                                           [FromQuery]
-                                                                           GetDishesDto dto)
+                                                                           [FromQuery(Name = "page-number")]
+                                                                           [Positive]
+                                                                           int pageNumber,
+    
+                                                                           [Required]
+                                                                           [Positive]
+                                                                           [FromQuery(Name = "page-size")]
+                                                                           int pageSize)
     {
-        var pageNumber = dto.PageNumber;
-        var pageSize = dto.PageSize;
         _logger.LogInformation("Dishes paged requested");
         var offset = pageSize * ( pageNumber - 1 );
         var fetch = pageSize;
         
         var dishes = await _context.Dishes
+                                   .OrderBy(d => d.Id)
                                    .Skip(offset)
                                    .Take(fetch)
                                    .ToListAsync();
