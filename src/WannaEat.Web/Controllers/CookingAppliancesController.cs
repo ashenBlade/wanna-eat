@@ -19,6 +19,7 @@ public class CookingAppliancesController : ControllerBase
         _logger = logger;
     }
 
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<CookingAppliance>>> GetAppliancesPaged(
         [FromQuery(Name = "s")][Range(1, 100)] 
         int pageSize = 20,
