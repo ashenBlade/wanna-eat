@@ -16,10 +16,15 @@ interface ProductsPageProps {
 const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesRepository, foodService}) => {
     const [products, setProducts] = useState<Product[]>([])
     const [dishes, setDishes] = useState<Dish[]>([])
-    const [show, setShow] = useState(false);
     useEffect(() => {
-        productsRepository.getProductsAsync(1, 10).then(p => setProducts(p))
-        dishesRepository.getDishesAsync(1, 10).then(d => setDishes(d))
+        productsRepository.getProductsAsync(1, 10).then(p => {
+            console.log(p)
+            setProducts(p)
+        })
+        dishesRepository.getDishesAsync(1, 10).then(d => {
+            console.log(d)
+            setDishes(d)
+        })
     }, [])
     
     const searchOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,14 +34,19 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
             return
         }
         
-        productsRepository.findWithName(name).then(p => setProducts(p))
+        if (name.length < 3)
+            return;
+        productsRepository.findWithName(name, 10).then(p => {
+            console.log(p)
+            setProducts(p)
+        })
     } 
     
     
     return (
         <div className={'h-100'}>
             <div className={'double-column h-100'}>
-                <div className={'d-flex h-25 align-items-end'}>
+                <div className={'d-flex align-items-end'}>
                     <div className={'p-1 w-100 d-flex justify-content-between align-items-center'}>
                         <input className={'form-control'} type={'search'}
                                placeholder={'Что искать?'}

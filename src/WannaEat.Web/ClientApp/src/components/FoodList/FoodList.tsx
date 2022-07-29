@@ -14,7 +14,7 @@ const FoodList: FC<FoodListProps> = ({foods}) => {
             <div className={'bg-light p-2 rounded-1 h-100 scroll-list'}>
                 <ul className={'list-group rounded-1'}>
                     {foods.map(f => (
-                            <li className={'list-group-item'}>
+                            <li key={f.id} className={'list-group-item'}>
                                 {f.name}
                             </li>
                         )

@@ -10,9 +10,11 @@ export interface IFoodService {
 export class FoodService implements IFoodService {
     
     async findRelevantDishes(products: Product[], cookingAppliances: CookingAppliance[] | null): Promise<Dish[]> {
-        const x = new DishRepository();
-        const dishes = await x.getDishesAsync(1, 10)
-        const productNames = [...products.map(p => p.name.toLowerCase())]
-        return [...dishes.filter(d => productNames.some(n => d.name.toLowerCase().indexOf(n) != -1))];
+        const productsQuery = products.map(p => `may-contain=${p.id}`).join('&')
+        const appliancesQuery = cookingAppliances === null 
+            ? ''
+            : '&' + (cookingAppliances.map(ca => `cook-with=${ca}`).join('&'))
+        return await fetch(`/api/v1/dishes/relevant?page-size=10&page-number=1&${productsQuery}${appliancesQuery}`)
+            .then(res => res.json())
     }
 }

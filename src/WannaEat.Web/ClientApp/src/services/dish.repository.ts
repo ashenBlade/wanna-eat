@@ -27,6 +27,10 @@ export class DishRepository implements IDishRepository{
             throw new Error('Page size could not be less than 1. Given: ' + pageSize);
         }
         
-        return await fetch(`/api/v1/dishes?page-number=${pageNumber}&page-size=${pageSize}`).then(res => res.json());
+        return await fetch(`/api/v1/dishes?page-number=${pageNumber}&page-size=${pageSize}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json());
     }
 }
