@@ -18,7 +18,6 @@ builder.Services.AddDbContext<WannaEatDbContext>(db =>
     if (builder.Environment.IsDevelopment())
     {
         db.EnableDetailedErrors();
-        db.UseMemoryCache(new MemoryCache(new MemoryCacheOptions()));
     }
 });
 
@@ -37,6 +36,6 @@ app.UseRouting();
 app.MapControllers();
 app.MapControllerRoute("default", "{controller}/{action}");
 
-// app.MapFallbackToFile("index.html");
+app.MapFallbackToFile("index.html");
 
 app.Run();
