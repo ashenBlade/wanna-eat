@@ -1,16 +1,11 @@
 .scroll-list {
     overflow: hidden;
     overflow-y: scroll;
-    
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 /* Hide scrollbar, but scroll still enabled*/
 /* For WebKit */
 .scroll-list::-webkit-scrollbar {
     display: none;
-}
-
-/* For Firefox and IE */
-.scroll-list {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
 }

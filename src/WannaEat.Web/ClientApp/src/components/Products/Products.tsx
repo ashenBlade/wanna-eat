@@ -16,31 +16,46 @@ interface ProductsPageProps {
 const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesRepository, foodService}) => {
     const [products, setProducts] = useState<Product[]>([])
     const [dishes, setDishes] = useState<Dish[]>([])
+    const [searchTimeout, setSearchTimeout] = useState<number | null>(null)
+    const [productSearchName, setProductSearchName] = useState('');
+    const timeoutDelaySeconds = 1;
     useEffect(() => {
-        productsRepository.getProductsAsync(1, 10).then(p => {
-            console.log(p)
+        productsRepository.getProductsAsync(1, 15).then(p => {
             setProducts(p)
-        })
-        dishesRepository.getDishesAsync(1, 10).then(d => {
-            console.log(d)
-            setDishes(d)
         })
     }, [])
     
-    const searchOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const name = e.target.value
-        if (!name) {
-            productsRepository.getProductsAsync(1, 10).then(p => setProducts(p))
-            return
+    const resetTimeout = () => {
+        if (searchTimeout !== null) {
+            window.clearTimeout(searchTimeout)
+            setSearchTimeout(null)
         }
+    }
+    
+    useEffect(() => {
+        resetTimeout();
         
-        if (name.length < 3)
+        const callback = window.setTimeout(() => {
+            searchName(productSearchName)
+        }, timeoutDelaySeconds * 1000)
+        setSearchTimeout(callback);
+    }, [productSearchName]);
+    
+    
+    const searchName = (name: string) => {
+        if (name.length === 0) {
+            productsRepository.getProductsAsync(1, 35).then(p => {
+                setProducts(p);
+            })
             return;
-        productsRepository.findWithName(name, 10).then(p => {
-            console.log(p)
+        }
+        if (name?.length < 3)
+            return;
+        
+        productsRepository.findWithName(name, 30).then(p => {
             setProducts(p)
-        })
-    } 
+        });
+    }
     
     
     return (
@@ -48,9 +63,9 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
             <div className={'double-column h-100'}>
                 <div className={'d-flex align-items-end'}>
                     <div className={'p-1 w-100 d-flex justify-content-between align-items-center'}>
-                        <input className={'form-control'} type={'search'}
+                        <input className={'form-control'} type={'text'}
                                placeholder={'Что искать?'}
-                               onChange={searchOnChange}/>
+                               onChange={e => setProductSearchName(e.currentTarget.value)}/>
                         <div className={'ms-2'}>
                             <i className={'fa fa-solid fa-gear fa-xl rotate-90-hover'}></i>
                         </div>
