@@ -34,7 +34,7 @@ public class ProductsController : ControllerBase
     {
         _logger.LogTrace("Products paged requested");
         var products = await _context.Products
-                                     .OrderBy(p => p.Id)
+                                     .OrderBy(p => p.Name)
                                      .Skip(pageSize * ( pageNumber - 1 ))
                                      .Take(pageSize)
                                      .ToListAsync();
