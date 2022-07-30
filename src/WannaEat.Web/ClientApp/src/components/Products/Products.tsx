@@ -67,7 +67,7 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
                                placeholder={'Что искать?'}
                                onChange={e => setProductSearchName(e.currentTarget.value)}/>
                         <div className={'ms-2'}>
-                            <i className={'fa fa-solid fa-gear fa-xl rotate-90-hover'}></i>
+                            <i className={'fa-solid fa-kitchen-set fa-2xl'}></i>
                         </div>
                     </div>
                 </div>
