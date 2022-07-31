@@ -32,7 +32,6 @@ const CookingApplianceMenu: FC<CookingApplianceMenuProps> = ({appliances}) => {
                 zIndex: 9999,
                 position: 'absolute',
                 visibility: shouldShowDropDown ? 'visible' : 'hidden',
-               
             }}>
                 <div className={'bg-light p-1 rounded-1'}>
                     <ul className={'list-group'}>
