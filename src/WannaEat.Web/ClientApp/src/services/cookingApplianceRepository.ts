@@ -7,11 +7,10 @@ export interface ICookingApplianceRepository {
 
 export class CookingApplianceRepository implements ICookingApplianceRepository {
     getCookingApplianceById(id: number): Promise<CookingAppliance | null> {
-        return Promise.resolve(null);
+        return fetch(`/api/v1/appliances/${id}`).then(res => res.status === 404 ? null : res.json())
     }
 
     getCookingAppliancesAsync(pageNumber: number, pageSize: number): Promise<CookingAppliance[]> {
-        return Promise.resolve([]);
+        return fetch(`/api/v1/appliances?n=${pageNumber}&s=${pageSize}`).then(res => res.json())
     }
-    
 }
