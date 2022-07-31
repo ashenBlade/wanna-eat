@@ -40,7 +40,7 @@ const CookingApplianceMenu: FC<CookingApplianceMenuProps> = ({appliances}) => {
 
     return (
         <div>
-            <i title={'Чем готовить?'} onClick={() => toggleDropDown()} className={'fa-solid fa-kitchen-set fa-2xl'}></i>
+            <i title={'Чем готовить?'} onClick={() => toggleDropDown()} className={'fa-solid fa-kitchen-set fa-2xl cursor-pointer'}></i>
             <div className={'bg-light rounded-1'} style={{
                 zIndex: 9,
                 position: 'absolute',
