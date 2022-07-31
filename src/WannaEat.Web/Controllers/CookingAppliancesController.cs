@@ -11,9 +11,9 @@ namespace WannaEat.Web.Controllers;
 public class CookingAppliancesController : ControllerBase
 {
     private readonly WannaEatDbContext _context;
-    private readonly Logger<CookingAppliancesController> _logger;
+    private readonly ILogger<CookingAppliancesController> _logger;
 
-    public CookingAppliancesController(WannaEatDbContext context, Logger<CookingAppliancesController> logger)
+    public CookingAppliancesController(WannaEatDbContext context, ILogger<CookingAppliancesController> logger)
     {
         _context = context;
         _logger = logger;
