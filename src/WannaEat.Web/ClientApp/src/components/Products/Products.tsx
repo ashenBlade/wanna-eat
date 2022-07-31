@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {Product} from "../../entities/product";
 import {Dish} from "../../entities/dish";
 import {IProductRepository} from "../../services/products.repository";
@@ -6,6 +6,7 @@ import {IDishRepository} from "../../services/dish.repository";
 import {IFoodService} from "../../services/food.service";
 import './Products.tsx.css';
 import FoodList from "../FoodList/FoodList";
+import CookingApplianceMenu from "../CookingApplianceMenu/CookingApplianceMenu";
 
 interface ProductsPageProps {
     productsRepository: IProductRepository
@@ -13,9 +14,10 @@ interface ProductsPageProps {
     foodService: IFoodService
 }
 
-const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesRepository, foodService}) => {
+const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, foodService}) => {
     const [products, setProducts] = useState<Product[]>([])
     const [dishes, setDishes] = useState<Dish[]>([])
+    const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
     const [searchTimeout, setSearchTimeout] = useState<number | null>(null)
     const [productSearchName, setProductSearchName] = useState('');
     const timeoutDelaySeconds = 1;
@@ -24,24 +26,24 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
             setProducts(p)
         })
     }, [])
-    
+
     const resetTimeout = () => {
         if (searchTimeout !== null) {
             window.clearTimeout(searchTimeout)
             setSearchTimeout(null)
         }
     }
-    
+
     useEffect(() => {
         resetTimeout();
-        
+
         const callback = window.setTimeout(() => {
             searchName(productSearchName)
         }, timeoutDelaySeconds * 1000)
         setSearchTimeout(callback);
     }, [productSearchName]);
-    
-    
+
+
     const searchName = (name: string) => {
         if (name.length === 0) {
             productsRepository.getProductsAsync(1, 35).then(p => {
@@ -51,13 +53,13 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
         }
         if (name?.length < 3)
             return;
-        
+
         productsRepository.findWithName(name, 30).then(p => {
             setProducts(p)
         });
     }
-    
-    
+
+
     return (
         <div className={'h-100'}>
             <div className={'double-column h-100'}>
@@ -66,9 +68,11 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
                         <input className={'form-control'} type={'text'}
                                placeholder={'Что искать?'}
                                onChange={e => setProductSearchName(e.currentTarget.value)}/>
-                        <div className={'ms-2'}>
-                            <i className={'fa-solid fa-kitchen-set fa-2xl'}></i>
-                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div className={'d-flex justify-content-center p-2'}>
+                        <CookingApplianceMenu applianceChangeCallback={selected => {}} appliances={[{name: 'Vlad', id: 1}, {name: 'Kirill', id: 2}, {name: 'Ivan', id: 3}, {name: 'Jenya', id: 4}]}/>
                     </div>
                 </div>
                 <div/>
@@ -76,11 +80,14 @@ const Products: React.FC<ProductsPageProps> = ({productsRepository, dishesReposi
                     <FoodList foods={products}/>
                 </div>
                 <div className={'grounded p-1 pb-2'}>
+                    <FoodList foods={selectedProducts}/>
+                </div>
+                <div className={'grounded p-1 pb-2'}>
                     <FoodList foods={dishes}/>
                 </div>
             </div>
         </div>
     );
-};
+}
 
 export default Products;
