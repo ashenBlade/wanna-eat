@@ -1,11 +1,11 @@
 import { Dish } from "../entities/dish";
 
-export interface IDishRepository {
+export interface IDishesRepository {
     getDishesAsync(pageNumber: number, pageSize: number): Promise<Dish[]>
     getDishByIdAsync(id: number): Promise<Dish | null>
 }
 
-export class DishRepository implements IDishRepository{
+export class DishesRepository implements IDishesRepository{
     static defaultDishes: Dish[] = [
         {id: 1, name: 'Backed bread'},
         {id: 2, name: 'Fried chicken'},

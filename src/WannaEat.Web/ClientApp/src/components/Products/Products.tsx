@@ -1,25 +1,30 @@
 import React, {FC, useEffect, useState} from 'react';
 import {Product} from "../../entities/product";
 import {Dish} from "../../entities/dish";
-import {IProductRepository} from "../../services/products.repository";
-import {IDishRepository} from "../../services/dish.repository";
+import {IProductsRepository} from "../../services/productsRepository";
+import {IDishesRepository} from "../../services/dishesRepository";
 import {IFoodService} from "../../services/food.service";
 import './Products.tsx.css';
 import FoodList from "../FoodList/FoodList";
 import CookingApplianceMenu from "../CookingApplianceMenu/CookingApplianceMenu";
 import {Food} from "../../entities/food";
 import {precacheAndRoute} from "workbox-precaching";
+import {ICookingApplianceRepository} from "../../services/cookingApplianceRepository";
+import { CookingAppliance } from '../../entities/cooking-appliance';
+import {useToggle} from "../../hooks/useToggle";
 
 interface ProductsPageProps {
-    productsRepository: IProductRepository
-    dishesRepository: IDishRepository
+    productsRepository: IProductsRepository
+    dishesRepository: IDishesRepository
     foodService: IFoodService
+    cookingApplianceRepository: ICookingApplianceRepository
 }
 
-const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, foodService}) => {
+const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, foodService, cookingApplianceRepository}) => {
     const [products, setProducts] = useState<Product[]>([]);
     const [dishes, setDishes] = useState<Dish[]>([]);
     const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+    const [cookingAppliances, setCookingAppliances] = useState<CookingAppliance[]>([]);
     
     const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
     const [productSearchName, setProductSearchName] = useState('');
@@ -28,6 +33,9 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     useEffect(() => {
         productsRepository.getProductsAsync(1, 15).then(p => {
             setProducts(p)
+        })
+        cookingApplianceRepository.getCookingAppliancesAsync(1, 10).then(a => {
+            setCookingAppliances(a)
         })
     }, [])
 
@@ -64,13 +72,23 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     
 
     const selectedProductOnChoose = (sp: Product) => {
-        setSelectedProducts(selectedProducts.filter(s => s.id !== sp.id))
+        setSelectedProducts([...selectedProducts.filter(s => s.id !== sp.id)])
         setProducts([...products, sp])
     }
     
     const productOnChoose = (p: Product) => {
         setProducts([...products.filter(op => op.id !== p.id)]);
         setSelectedProducts([...selectedProducts, p]);
+    }
+    
+    const [calculateButtonEnabled, setCalculateButtonEnabled] = useState(true)
+    
+    const onCalculateButtonClick = () => {
+        setCalculateButtonEnabled(false)
+        foodService.findRelevantDishes(selectedProducts, cookingAppliances).then(d => {
+            setDishes(d);
+            setCalculateButtonEnabled(true);
+        })
     }
     
     return (
@@ -85,10 +103,12 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
                 </div>
                 <div>
                     <div className={'d-flex justify-content-center p-2'}>
-                        <CookingApplianceMenu applianceChangeCallback={selected => {}} appliances={[{name: 'Vlad', id: 1}, {name: 'Kirill', id: 2}, {name: 'Ivan', id: 3}, {name: 'Jenya', id: 4}]}/>
+                        <CookingApplianceMenu applianceChangeCallback={selected => {}} appliances={cookingAppliances}/>
                     </div>
                 </div>
-                <div/>
+                <div>
+                    <button className={'btn btn-success'} onClick={onCalculateButtonClick} disabled={!calculateButtonEnabled}>Подсчитать</button>
+                </div>
                 <div className={'grounded p-1 pb-2'}>
                     <FoodList onChoose={productOnChoose} foods={products}/>
                 </div>

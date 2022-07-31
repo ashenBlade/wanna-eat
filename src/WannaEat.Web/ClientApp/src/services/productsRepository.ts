@@ -1,12 +1,12 @@
 import {Product} from "../entities/product";
 
-export interface IProductRepository {
+export interface IProductsRepository {
     getProductsAsync(pageNumber: number, pageSize: number): Promise<Product[]>
     getProductById(id: number): Promise<Product | null>
     findWithName(name: string, max: number): Promise<Product[]>
 }
 
-export class ProductRepository implements IProductRepository {
+export class ProductsRepository implements IProductsRepository {
     getProductById(id: number): Promise<Product | null> {
         return fetch(`api/v1/products/${id}`).then(res => res.json());
     }

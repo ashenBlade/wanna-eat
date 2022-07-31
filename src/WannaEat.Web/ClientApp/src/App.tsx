@@ -1,21 +1,26 @@
 import NavBar from "./components/NavBar";
 import Products from "./components/Products/Products";
-import {ProductRepository} from "./services/products.repository";
-import {DishRepository} from "./services/dish.repository";
+import {ProductsRepository} from "./services/productsRepository";
+import {DishesRepository} from "./services/dishesRepository";
 import {FoodService} from "./services/food.service";
 import './custom.css';
+import {CookingApplianceRepository} from "./services/cookingApplianceRepository";
 
 const App = () => {
-    const productsRepo = new ProductRepository()
-    const dishesRepo = new DishRepository()
+    const productsRepo = new ProductsRepository()
+    const dishesRepo = new DishesRepository()
     const foodService = new FoodService()
+    const cookingAppliancesRepo = new CookingApplianceRepository()
     return (
         <div className={'page-layout'}>
             <div>
                 <NavBar/>
             </div>
             <div className={'container-lg page'}>
-                <Products productsRepository={productsRepo} dishesRepository={dishesRepo} foodService={foodService}/>
+                <Products cookingApplianceRepository={cookingAppliancesRepo}
+                          productsRepository={productsRepo} 
+                          dishesRepository={dishesRepo}
+                          foodService={foodService}/>
             </div>
         </div>
     )   
