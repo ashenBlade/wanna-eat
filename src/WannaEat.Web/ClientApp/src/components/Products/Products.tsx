@@ -3,7 +3,7 @@ import {Product} from "../../entities/product";
 import {Dish} from "../../entities/dish";
 import {IProductsRepository} from "../../services/productsRepository";
 import {IDishesRepository} from "../../services/dishesRepository";
-import {IFoodService} from "../../services/food.service";
+import {IFoodService} from "../../services/foodService";
 import './Products.tsx.css';
 import FoodList from "../FoodList/FoodList";
 import CookingApplianceMenu from "../CookingApplianceMenu/CookingApplianceMenu";
@@ -25,8 +25,9 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     const [dishes, setDishes] = useState<Dish[]>([]);
     const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
     const [cookingAppliances, setCookingAppliances] = useState<CookingAppliance[]>([]);
+    const [dishesNotFoundMessage, setDishesNotFoundMessage] = useState('');
     
-    const [searchTimeout, setSearchTimeout] = useState<number>(0);
+    const [searchTimeout, setSearchTimeout] = useState(0);
     const [productSearchName, setProductSearchName] = useState('');
     
     const searchDelaySeconds = 1;
@@ -35,6 +36,11 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
             setProducts(p)
         })
         cookingApplianceRepository.getCookingAppliancesAsync(1, 10).then(a => {
+            if (a.length === 0) {
+                setDishesNotFoundMessage('Ничего не нашлось(')
+            } else {
+                setDishesNotFoundMessage('')
+            }
             setCookingAppliances(a)
         })
     }, [])
@@ -66,6 +72,10 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
             setProducts(p)
         });
     }
+    
+    useEffect(() => {
+        setCalculateButtonEnabled(selectedProducts.length !== 0)
+    }, [selectedProducts])
     
 
     const selectedProductOnChoose = (sp: Product) => {
@@ -106,14 +116,14 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
                 <div>
                     <button className={'btn btn-success'} onClick={onCalculateButtonClick} disabled={!calculateButtonEnabled}>Подсчитать</button>
                 </div>
-                <div className={'grounded p-1 pb-2'}>
+                <div title={'Что можно выбрать'} className={'grounded p-1 pb-2'}>
                     <FoodList onChoose={productOnChoose} foods={products}/>
                 </div>
-                <div className={'grounded p-1 pb-2'}>
-                    <FoodList onChoose={selectedProductOnChoose} foods={selectedProducts}/>
+                <div title={'Что у вас имеется'} className={'grounded p-1 pb-2'}>
+                    <FoodList onChoose={selectedProductOnChoose} foods={selectedProducts} emptyListPlaceholder={'Выберите продукты из списка слева'}/>
                 </div>
-                <div className={'grounded p-1 pb-2'}>
-                    <FoodList foods={dishes}/>
+                <div title={'Что можно приготовить'} className={'grounded p-1 pb-2'}>
+                    <FoodList foods={dishes} emptyListPlaceholder={dishesNotFoundMessage}/>
                 </div>
             </div>
         </div>

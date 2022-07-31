@@ -29,7 +29,7 @@ public class CookingAppliancesController : ControllerBase
         var appliances = await _context.CookingAppliances
                                        .OrderBy(x => x.Id)
                                        .Skip(( pageNumber - 1 ) * pageSize)
-                                       .Take(pageNumber)
+                                       .Take(pageSize)
                                        .ToListAsync();
         return Ok(appliances);
     }

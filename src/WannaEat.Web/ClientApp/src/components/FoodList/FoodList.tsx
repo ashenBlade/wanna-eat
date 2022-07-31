@@ -5,14 +5,15 @@ import './FoodList.tsx.css'
 export interface FoodListProps<TFood extends Food> {
     foods: TFood[],
     onChoose?: ((product: TFood) => void) | undefined,
+    emptyListPlaceholder?: string
 }
 
-const FoodList = <TFood extends Food>({foods, onChoose}: FoodListProps<TFood>) => {
+const FoodList = <TFood extends Food>({foods, onChoose, emptyListPlaceholder}: FoodListProps<TFood>) => {
     const searchById = (id: number) => foods.filter(f => f.id === id)[0] ?? null;
+    const placeholder = emptyListPlaceholder ?? '';
     const foodOnClick = (e: React.SyntheticEvent<HTMLLIElement, MouseEvent>) => {
         e.stopPropagation()
         const food = searchById(Number(e.currentTarget.value));
-        console.log(food)
         if (onChoose && food) {
             onChoose(food)
         }
@@ -26,12 +27,13 @@ const FoodList = <TFood extends Food>({foods, onChoose}: FoodListProps<TFood>) =
                     <ul className={'list-group rounded-1'} style={{
                         maxHeight: '100px'
                     }}>
-                        {foods.map(f => (
-                                <li key={f.id} value={f.id} onClick={foodOnClick} className={'list-group-item'}>
+                        { 
+                            foods.length > 0 ? foods.map(f => (
+                                <li key={f.id} value={f.id} onClick={foodOnClick} className={'list-group-item cursor-pointer'}>
                                     {f.name}
                                 </li>
                             )
-                        )}
+                        ) : <p className={'text-center text-black'}>{placeholder}</p>}
                     </ul>
                 </div>
             </div>

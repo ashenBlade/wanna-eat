@@ -2,7 +2,7 @@ import NavBar from "./components/NavBar";
 import Products from "./components/Products/Products";
 import {ProductsRepository} from "./services/productsRepository";
 import {DishesRepository} from "./services/dishesRepository";
-import {FoodService} from "./services/food.service";
+import {FoodService} from "./services/foodService";
 import './custom.css';
 import {CookingApplianceRepository} from "./services/cookingApplianceRepository";
 
