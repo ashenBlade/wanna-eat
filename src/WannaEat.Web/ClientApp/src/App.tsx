@@ -16,7 +16,7 @@ const App = () => {
             <div>
                 <NavBar/>
             </div>
-            <div className={'container-lg page'}>
+            <div className={'container-lg page py-2'}>
                 <Products cookingApplianceRepository={cookingAppliancesRepo}
                           productsRepository={productsRepo} 
                           dishesRepository={dishesRepo}

@@ -22,25 +22,33 @@ interface ProductsPageProps {
 
 const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, foodService, cookingApplianceRepository}) => {
     const [products, setProducts] = useState<Product[]>([]);
-    const [dishes, setDishes] = useState<Dish[]>([]);
     const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+    const moveToSelected = (product: Product) => {
+        setProducts([...products.filter(p => p.id !== product.id)])
+        setSelectedProducts([...selectedProducts, product])
+    }
+    
+    const moveToProducts = (product: Product) => {
+        setSelectedProducts([...selectedProducts.filter(sp => sp.id !== product.id)])
+        setProducts([...products, product])
+    }
+    
+    const [dishes, setDishes] = useState<Dish[]>([]);
     const [cookingAppliances, setCookingAppliances] = useState<CookingAppliance[]>([]);
     const [dishesNotFoundMessage, setDishesNotFoundMessage] = useState('');
     
     const [searchTimeout, setSearchTimeout] = useState(0);
     const [productSearchName, setProductSearchName] = useState('');
     
-    const searchDelaySeconds = 1;
+    const searchDelaySeconds = 0.5;
+    
+    const defaultPageSize = 15
+    
     useEffect(() => {
-        productsRepository.getProductsAsync(1, 15).then(p => {
-            setProducts(p)
+        productsRepository.getProductsAsync(1, defaultPageSize).then(products => {
+            setProducts(products)
         })
-        cookingApplianceRepository.getCookingAppliancesAsync(1, 10).then(a => {
-            if (a.length === 0) {
-                setDishesNotFoundMessage('Ничего не нашлось(')
-            } else {
-                setDishesNotFoundMessage('')
-            }
+        cookingApplianceRepository.getCookingAppliancesAsync(1, defaultPageSize).then(a => {
             setCookingAppliances(a)
         })
     }, [])
@@ -53,23 +61,22 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
         resetTimeout();
 
         const handle = window.setTimeout(() => {
-            searchName(productSearchName)
-        }, searchDelaySeconds * 1000)
+            searchProductsByName(productSearchName)
+        }, searchDelaySeconds * 1000);
         setSearchTimeout(handle);
     }, [productSearchName]);
     
-    const searchName = (name: string) => {
-        if (name.length === 0) {
-            productsRepository.getProductsAsync(1, 35).then(p => {
-                setProducts(p);
-            })
+    const searchProductsByName = (name: string) => {
+        if (name.length < 3) {
+            if (name.length === 0)
+                productsRepository.getProductsAsync(1, defaultPageSize).then(prods => {
+                    setProducts([...prods.filter(p => !selectedProducts.some(sp => sp.id === p.id))]);
+                })
             return;
         }
-        if (name?.length < 3)
-            return;
-
-        productsRepository.findWithName(name, 30).then(p => {
-            setProducts(p)
+        
+        productsRepository.findWithName(name, 30).then(prods => {
+            setProducts([...prods.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
         });
     }
     
@@ -79,13 +86,11 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     
 
     const selectedProductOnChoose = (sp: Product) => {
-        setSelectedProducts([...selectedProducts.filter(s => s.id !== sp.id)])
-        setProducts([...products, sp])
+        moveToProducts(sp)
     }
     
     const productOnChoose = (p: Product) => {
-        setProducts([...products.filter(op => op.id !== p.id)]);
-        setSelectedProducts([...selectedProducts, p]);
+        moveToSelected(p)
     }
     
     const [calculateButtonEnabled, setCalculateButtonEnabled] = useState(true)
@@ -93,6 +98,9 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     const onCalculateButtonClick = () => {
         setCalculateButtonEnabled(false)
         foodService.findRelevantDishes(selectedProducts, cookingAppliances).then(d => {
+            setDishesNotFoundMessage(d.length === 0 
+                ? 'Ничего не нашлось('
+                : '');
             setDishes(d);
             setCalculateButtonEnabled(true);
         })
