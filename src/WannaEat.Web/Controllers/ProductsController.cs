@@ -51,7 +51,7 @@ public class ProductsController : ControllerBase
     {
         _logger.LogInformation("Search product by name '{ProductName}' requested with max amount {MaxAmount}", name, max);
         var products = await _context.Products
-                                     .Where(p => p.Name.ToLower().Contains(name.ToLower()))
+                                     .Where(p => p.NameSearchVector.Matches(EF.Functions.PlainToTsQuery(name)))
                                      .Take(max)
                                      .ToListAsync();
         _logger.LogDebug("{ProductsAmount} found by query {ProductName}", products.Count, name);

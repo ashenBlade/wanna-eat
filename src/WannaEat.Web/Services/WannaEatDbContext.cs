@@ -18,10 +18,15 @@ public class WannaEatDbContext: DbContext
     {
         base.OnModelCreating(model);
         
-        model.Entity<Dish>()
-             .HasMany(d => d.CookingAppliances)
+        model.Entity<Dish>(dish =>
+        {
+            dish.HasMany(d => d.CookingAppliances)
              .WithMany(c => c.Dishes);
-        
+        });
+        model.Entity<Food>(food =>
+        {
+            food.HasGeneratedTsVectorColumn(f => f.NameSearchVector, "russian", f => new {f.Name});
+        });
         model.Entity<DishProduct>(e =>
         {
             e.HasKey(dp => new{dp.DishId, dp.ProductId});

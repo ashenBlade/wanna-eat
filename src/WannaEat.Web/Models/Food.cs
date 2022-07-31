@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using NpgsqlTypes;
 
 namespace WannaEat.Web.Models;
 
@@ -19,4 +20,6 @@ public class Food
     public Minerals Minerals { get; set; }
     [Required]
     public Vitamins Vitamins { get; set; }
+
+    public NpgsqlTsVector NameSearchVector { get; set; }
 }
