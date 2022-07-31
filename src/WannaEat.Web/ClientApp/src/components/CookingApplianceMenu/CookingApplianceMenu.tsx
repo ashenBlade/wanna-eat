@@ -46,17 +46,12 @@ const CookingApplianceMenu: FC<CookingApplianceMenuProps> = ({appliances}) => {
                 position: 'absolute',
                 visibility: shouldShowDropDown ? 'visible' : 'hidden',
             }}>
-                <div onClick={toggleDropDown} style={{
-                    position: 'fixed',
-                    height: '100vh',
-                    width: '100vw',
-                    left: 0,
-                    top: 0,
-                    zIndex: -1,
+                <div onClick={toggleDropDown} className={'full-paged'} style={{
+                    zIndex: -1
                 }}/>
-                <div key={anyApplianceId} className={'bg-light p-1 rounded-1'}>
+                <div key={anyApplianceId} className={'bg-light p-1 rounded-1 menu'}>
                     <div className={'form-check'} onClick={onAnyApplianceClick}>
-                        <label className={'form-label'}>
+                        <label className={'form-label cursor-pointer'}>
                             <input checked={selected.length === 0} readOnly={true} value={anyApplianceId} type="checkbox" className={'form-check-input'}/>
                             Неважно
                         </label>
@@ -64,7 +59,7 @@ const CookingApplianceMenu: FC<CookingApplianceMenuProps> = ({appliances}) => {
                     {
                         appliances.map(a => (
                             <div key={a.id} className="form-check">
-                                <label className="form-label">
+                                <label className="form-label cursor-pointer">
                                     <input onChange={onApplianceClick} readOnly={true} checked={isSelected(a)} value={a.id} type={'checkbox'} className="form-check-input"/>
                                     {a.name}
                                 </label>
