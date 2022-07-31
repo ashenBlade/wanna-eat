@@ -7,6 +7,8 @@ import {IFoodService} from "../../services/food.service";
 import './Products.tsx.css';
 import FoodList from "../FoodList/FoodList";
 import CookingApplianceMenu from "../CookingApplianceMenu/CookingApplianceMenu";
+import {Food} from "../../entities/food";
+import {precacheAndRoute} from "workbox-precaching";
 
 interface ProductsPageProps {
     productsRepository: IProductRepository
@@ -15,12 +17,14 @@ interface ProductsPageProps {
 }
 
 const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, foodService}) => {
-    const [products, setProducts] = useState<Product[]>([])
-    const [dishes, setDishes] = useState<Dish[]>([])
-    const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
-    const [searchTimeout, setSearchTimeout] = useState<number | null>(null)
+    const [products, setProducts] = useState<Product[]>([]);
+    const [dishes, setDishes] = useState<Dish[]>([]);
+    const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+    
+    const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
     const [productSearchName, setProductSearchName] = useState('');
-    const timeoutDelaySeconds = 1;
+    
+    const searchDelaySeconds = 1;
     useEffect(() => {
         productsRepository.getProductsAsync(1, 15).then(p => {
             setProducts(p)
@@ -39,11 +43,10 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
 
         const callback = window.setTimeout(() => {
             searchName(productSearchName)
-        }, timeoutDelaySeconds * 1000)
+        }, searchDelaySeconds * 1000)
         setSearchTimeout(callback);
     }, [productSearchName]);
-
-
+    
     const searchName = (name: string) => {
         if (name.length === 0) {
             productsRepository.getProductsAsync(1, 35).then(p => {
@@ -58,8 +61,18 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
             setProducts(p)
         });
     }
+    
 
-
+    const selectedProductOnChoose = (sp: Product) => {
+        setSelectedProducts(selectedProducts.filter(s => s.id !== sp.id))
+        setProducts([...products, sp])
+    }
+    
+    const productOnChoose = (p: Product) => {
+        setProducts([...products.filter(op => op.id !== p.id)]);
+        setSelectedProducts([...selectedProducts, p]);
+    }
+    
     return (
         <div className={'h-100'}>
             <div className={'double-column h-100'}>
@@ -77,10 +90,10 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
                 </div>
                 <div/>
                 <div className={'grounded p-1 pb-2'}>
-                    <FoodList foods={products}/>
+                    <FoodList onChoose={productOnChoose} foods={products}/>
                 </div>
                 <div className={'grounded p-1 pb-2'}>
-                    <FoodList foods={selectedProducts}/>
+                    <FoodList onChoose={selectedProductOnChoose} foods={selectedProducts}/>
                 </div>
                 <div className={'grounded p-1 pb-2'}>
                     <FoodList foods={dishes}/>
