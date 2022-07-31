@@ -35,7 +35,7 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     
     const [dishes, setDishes] = useState<Dish[]>([]);
     const [cookingAppliances, setCookingAppliances] = useState<CookingAppliance[]>([]);
-    const [dishesNotFoundMessage, setDishesNotFoundMessage] = useState('');
+    const [dishesNotFoundMessage, setDishesNotFoundMessage] = useState('Здесь появится, то что можно приготовить');
     
     const [searchTimeout, setSearchTimeout] = useState(0);
     const [productSearchName, setProductSearchName] = useState('');

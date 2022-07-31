@@ -37,19 +37,23 @@ const CookingApplianceMenu: FC<CookingApplianceMenuProps> = ({appliances}) => {
     const onAnyApplianceClick = () => {
         setSelected([])
     }
-    
-    useEffect(() => {
-        console.log(selected)
-    }, [selected])
 
     return (
         <div>
             <i title={'Чем готовить?'} onClick={() => toggleDropDown()} className={'fa-solid fa-kitchen-set fa-2xl'}></i>
             <div className={'bg-light rounded-1'} style={{
-                zIndex: 9999,
+                zIndex: 9,
                 position: 'absolute',
                 visibility: shouldShowDropDown ? 'visible' : 'hidden',
             }}>
+                <div onClick={toggleDropDown} style={{
+                    position: 'fixed',
+                    height: '100vh',
+                    width: '100vw',
+                    left: 0,
+                    top: 0,
+                    zIndex: -1,
+                }}/>
                 <div key={anyApplianceId} className={'bg-light p-1 rounded-1'}>
                     <div className={'form-check'} onClick={onAnyApplianceClick}>
                         <label className={'form-label'}>
