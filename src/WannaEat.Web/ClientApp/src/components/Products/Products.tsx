@@ -26,7 +26,7 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
     const [cookingAppliances, setCookingAppliances] = useState<CookingAppliance[]>([]);
     
-    const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
+    const [searchTimeout, setSearchTimeout] = useState<number>(0);
     const [productSearchName, setProductSearchName] = useState('');
     
     const searchDelaySeconds = 1;
@@ -40,19 +40,16 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     }, [])
 
     const resetTimeout = () => {
-        if (searchTimeout !== null) {
-            window.clearTimeout(searchTimeout)
-            setSearchTimeout(null)
-        }
+        window.clearTimeout(searchTimeout)
     }
 
     useEffect(() => {
         resetTimeout();
 
-        const callback = window.setTimeout(() => {
+        const handle = window.setTimeout(() => {
             searchName(productSearchName)
         }, searchDelaySeconds * 1000)
-        setSearchTimeout(callback);
+        setSearchTimeout(handle);
     }, [productSearchName]);
     
     const searchName = (name: string) => {
