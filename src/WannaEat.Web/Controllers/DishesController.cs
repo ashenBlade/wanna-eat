@@ -61,6 +61,7 @@ public class DishesController: ControllerBase
                    .Where(d => d.CookingAppliances.All(ca => ids.Contains(ca.Id)));
         }
         var dishes = await query
+                          .Where(d => d.ConsistsOf.All(dp => dto.MayContain.Contains(dp.ProductId)))
                           .Select(d => new
                                        {
                                            Dish = d,
