@@ -3,7 +3,7 @@ import {Product} from "../entities/product";
 export interface IProductsRepository {
     getProductsAsync(pageNumber: number, pageSize: number): Promise<Product[]>
     getProductById(id: number): Promise<Product | null>
-    findWithName(name: string, max: number): Promise<Product[]>
+    findWithName(name: string, pageNumber: number, max: number): Promise<Product[]>
 }
 
 export class ProductsRepository implements IProductsRepository {
@@ -22,7 +22,7 @@ export class ProductsRepository implements IProductsRepository {
         return fetch(`/api/v1/products?s=${pageSize}&n=${pageNumber}`).then(res => res.json());
     }
     
-    findWithName(name: string, max: number = 10): Promise<Product[]> {
+    findWithName(name: string, pageNumber: number, max: number = 10): Promise<Product[]> {
         if (name.length < 3) {
             throw new Error('Product length could not be less than 3. Given: ' + name);
         }
@@ -33,6 +33,10 @@ export class ProductsRepository implements IProductsRepository {
         if (max < 1 || 100 < max) {
             throw new Error('Max return range must be in range 1 to 100. Given: ' + max);
         }
-        return fetch(`/api/v1/products/search?name=${encodeURIComponent(name)}&max=${max}`).then(res => res.json())
+        
+        if (pageNumber < 1) {
+            throw new Error(`Page number can not be less than 1. Given: ${pageNumber}`)
+        }
+        return fetch(`/api/v1/products/search?name=${encodeURIComponent(name)}&page=${pageNumber}&size=${max}`).then(res => res.json())
     }
 }

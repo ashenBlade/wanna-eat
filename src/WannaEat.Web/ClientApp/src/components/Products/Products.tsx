@@ -7,11 +7,8 @@ import {IFoodService} from "../../services/foodService";
 import './Products.tsx.css';
 import FoodList from "../FoodList/FoodList";
 import CookingApplianceMenu from "../CookingApplianceMenu/CookingApplianceMenu";
-import {Food} from "../../entities/food";
-import {precacheAndRoute} from "workbox-precaching";
 import {ICookingApplianceRepository} from "../../services/cookingApplianceRepository";
 import { CookingAppliance } from '../../entities/cooking-appliance';
-import {useToggle} from "../../hooks/useToggle";
 
 interface ProductsPageProps {
     productsRepository: IProductsRepository
@@ -32,6 +29,7 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
         setSelectedProducts([...selectedProducts.filter(sp => sp.id !== product.id)])
         setProducts([...products, product])
     }
+    const [currentProductsPage, setCurrentProductsPage] = useState(1)
     
     const [dishes, setDishes] = useState<Dish[]>([]);
     const [cookingAppliances, setCookingAppliances] = useState<CookingAppliance[]>([]);
@@ -56,7 +54,24 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     const resetTimeout = () => {
         window.clearTimeout(searchTimeout)
     }
-
+    const loadNextProductsPage = () => {
+        if (productSearchName.length >= 3) {
+            productsRepository.findWithName(productSearchName, currentProductsPage + 1, defaultPageSize).then(loaded => {
+                console.log(loaded)
+                setProducts([...products, ...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
+                setCurrentProductsPage(currentProductsPage + 1)
+                console.log('New page set')
+            })
+        } else {
+            productsRepository.getProductsAsync(currentProductsPage + 1, defaultPageSize).then(loaded => {
+                console.log(loaded)
+                setProducts([...products, ...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
+                setCurrentProductsPage(currentProductsPage + 1)
+                console.log('New page set')
+            })
+        }
+    }
+    
     useEffect(() => {
         resetTimeout();
 
@@ -69,16 +84,23 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     const searchProductsByName = (name: string) => {
         if (name.length < 3) {
             if (name.length === 0)
-                productsRepository.getProductsAsync(1, defaultPageSize).then(prods => {
-                    setProducts([...prods.filter(p => !selectedProducts.some(sp => sp.id === p.id))]);
+                productsRepository.getProductsAsync(1, defaultPageSize).then(loaded => {
+                    console.log(loaded)
+                    setProducts([...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))]);
+                    setCurrentProductsPage(1)
                 })
             return;
         }
         
-        productsRepository.findWithName(name, 30).then(prods => {
-            setProducts([...prods.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
+        productsRepository.findWithName(name, 1, defaultPageSize).then(loaded => {
+            setProducts([...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
+            setCurrentProductsPage(1)
         });
     }
+    
+    useEffect(() => {
+        console.log('Current page:', currentProductsPage)
+    }, [currentProductsPage])
     
     useEffect(() => {
         setCalculateButtonEnabled(selectedProducts.length !== 0)
@@ -125,7 +147,9 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
                     <button className={'btn btn-success'} onClick={onCalculateButtonClick} disabled={!calculateButtonEnabled}>Подсчитать</button>
                 </div>
                 <div title={'Что можно выбрать'} className={'grounded p-1 pb-2'}>
-                    <FoodList onChoose={productOnChoose} foods={products}/>
+                    <FoodList onChoose={productOnChoose} onScrollToEnd={() => {
+                        loadNextProductsPage()
+                    }} foods={products}/>
                 </div>
                 <div title={'Что у вас имеется'} className={'grounded p-1 pb-2'}>
                     <FoodList onChoose={selectedProductOnChoose} foods={selectedProducts} emptyListPlaceholder={'Выберите продукты из списка слева'}/>

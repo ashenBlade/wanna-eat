@@ -46,13 +46,17 @@ public class ProductsController : ControllerBase
                                                                             [Required]
                                                                             [MinLength(3)]
                                                                             string name, 
-                                                                            [FromQuery(Name = "max")][Range(1, 100)]
-                                                                            int max = 10)
+                                                                            [FromQuery(Name = "size")][Range(1, 100)]
+                                                                            int size = 10,
+                                                                            [FromQuery(Name = "page")][Range(1, 1000)]
+                                                                            int page = 1)
     {
-        _logger.LogInformation("Search product by name '{ProductName}' requested with max amount {MaxAmount}", name, max);
+        _logger.LogInformation("Search product by name '{ProductName}' requested with max amount {MaxAmount}", name, size);
+        _logger.LogInformation("Size: {Size}, Page: {Page}", size, page);
         var products = await _context.Products
-                                     .Where(p => p.NameSearchVector.Matches(EF.Functions.PlainToTsQuery(name)))
-                                     .Take(max)
+                                     .Where(p => p.NameSearchVector.Matches(EF.Functions.PlainToTsQuery("russian", name)))
+                                     .Skip((page - 1) * size)
+                                     .Take(size)
                                      .ToListAsync();
         _logger.LogDebug("{ProductsAmount} found by query {ProductName}", products.Count, name);
         return Ok(products);
