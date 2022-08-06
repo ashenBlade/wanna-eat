@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
+using WannaEat.Web.Interfaces;
 using WannaEat.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,9 @@ builder.Services
         {
             newtonsoft.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
         });
+builder.Services.AddHttpClient<HttpClient>();
+builder.Services.AddScoped<IRecipeService, MZRRecipeService>();
+builder.Services.AddScoped<IRecipeService, MZRRecipeService>();
 builder.Services.AddDbContext<WannaEatDbContext>(db =>
 {
     db.UseNpgsql(builder.Configuration.GetConnectionString("WannaEat"));

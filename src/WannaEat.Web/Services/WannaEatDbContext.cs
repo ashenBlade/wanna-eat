@@ -1,44 +1,26 @@
 using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
 using WannaEat.Web.Models;
 
 namespace WannaEat.Web.Services;
 
 public class WannaEatDbContext: DbContext
 {
-    public DbSet<Food> Foods => Set<Food>();
-    public DbSet<Dish> Dishes => Set<Dish>();
-    public DbSet<Product> Products => Set<Product>();
-    public DbSet<DishProduct> DishProducts => Set<DishProduct>();
-    public DbSet<CookingAppliance> CookingAppliances => Set<CookingAppliance>();
+    public DbSet<Ingredient> Ingredients => Set<Ingredient>();
+    
     public WannaEatDbContext(DbContextOptions<WannaEatDbContext> options)
      : base(options)
     { }
 
-    protected override void OnModelCreating(ModelBuilder model)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(model);
-        
-        model.Entity<Dish>(dish =>
+        modelBuilder.Entity<Ingredient>(ingredient =>
         {
-            dish.HasMany(d => d.CookingAppliances)
-             .WithMany(c => c.Dishes);
-        });
-        model.Entity<Food>(food =>
-        {
-            food.HasGeneratedTsVectorColumn(f => f.NameSearchVector, "russian", f => new {f.Name});
-        });
-        model.Entity<DishProduct>(e =>
-        {
-            e.HasKey(dp => new{dp.DishId, dp.ProductId});
-            e.HasOne(dp => dp.Dish)
-             .WithMany(d => d.ConsistsOf)
-             .HasForeignKey(dp => dp.DishId)
-             .OnDelete(DeleteBehavior.Cascade);
-
-            e.HasOne(dp => dp.Product)
-             .WithMany(p => p.RequiredForDish)
-             .HasForeignKey(dp => dp.ProductId)
-             .OnDelete(DeleteBehavior.Cascade);
+            ingredient.HasGeneratedTsVectorColumn(i => i.NameSearchVector,
+                                                  "russian",
+                                                  i => new {i.Name})
+                      .HasIndex(i => i.NameSearchVector)
+                      .HasMethod("GIN");
         });
     }
 }
