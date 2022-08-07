@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Food} from "../../entities/food";
 import './FoodList.tsx.css'
+import {Food} from "../../entities/food";
 
 export interface FoodListProps<TFood extends Food> {
     foods: TFood[],
@@ -9,16 +9,8 @@ export interface FoodListProps<TFood extends Food> {
     onScrollToEnd?: () => (void)
 }
 
-const FoodList = <TFood extends Food>({foods, onChoose, emptyListPlaceholder, onScrollToEnd}: FoodListProps<TFood>) => {
-    const searchById = (id: number) => foods.filter(f => f.id === id)[0] ?? null;
+const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onScrollToEnd}: FoodListProps<TFood>) => {
     const placeholder = emptyListPlaceholder ?? '';
-    const foodOnClick = (e: React.SyntheticEvent<HTMLLIElement, MouseEvent>) => {
-        e.stopPropagation()
-        const food = searchById(Number(e.currentTarget.value));
-        if (onChoose && food) {
-            onChoose(food)
-        }
-    }
     
     const [observer, setObserver] = useState(new IntersectionObserver((entries, observer1) => {
         if (onScrollToEnd) {
@@ -51,7 +43,7 @@ const FoodList = <TFood extends Food>({foods, onChoose, emptyListPlaceholder, on
                             foods.length > 0 
                                 ? 
                                 foods.map(f => (
-                                    <li key={f.id} value={f.id} onClick={foodOnClick}
+                                    <li key={f.name} value={f.name} 
                                         className={'list-group-item cursor-pointer'}>
                                         {f.name}
                                     </li>))

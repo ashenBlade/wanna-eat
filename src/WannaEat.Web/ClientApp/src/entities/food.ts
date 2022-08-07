@@ -1,4 +1,4 @@
 export interface Food {
+    readonly name: string,
     readonly id: number
-    readonly name: string
 }

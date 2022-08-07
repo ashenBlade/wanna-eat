@@ -32,13 +32,13 @@ public class MZRRecipeService: IRecipeService
                 _logger.LogWarning("Could not parse JSON from response");
                 return Enumerable.Empty<Recipe>();
             }
-            var recipes = mzr.Result.Recipes.Select(f => new Recipe
-                                                         {
-                                                             Description = string.Empty,
-                                                             Link = new Uri(f.Food.Uri),
-                                                             Name = f.Food.Name,
-                                                             ImageUrl = new Uri(f.Food.ImageUrl)
-                                                         });
+            var recipes = mzr.Result.Recipes
+                             .Select(f => new Recipe
+                                          {
+                                              Link = new Uri(f.Food.Uri),
+                                              Name = f.Food.Name,
+                                              ImageUrl = new Uri(f.Food.ImageUrl)
+                                          });
             return recipes;
         }
         catch (TaskCanceledException canceled)
@@ -64,11 +64,13 @@ public class MZRRecipeService: IRecipeService
                                              new("query[isEmpty]", "false"), 
                                              new("query[ingredients]", ingredientsString),
                                              new("platformId", "101"),
-                                             new("query[count_on_page]", "9")
+                                             new("query[count_on_page]", "10")
                                          });
     }
 
-    class MZRResponse
+    #region JSON parsing classes
+    
+    private class MZRResponse
     {
         [JsonProperty("result")]
         public MZRResult Result { get; set; }
@@ -97,4 +99,6 @@ public class MZRRecipeService: IRecipeService
         [JsonProperty("photo360200")]
         public string ImageUrl { get; set; }
     }
+
+    #endregion
 }

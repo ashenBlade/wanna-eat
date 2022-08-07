@@ -1,18 +1,16 @@
-import {Product} from "../entities/product";
-import {CookingAppliance} from "../entities/cooking-appliance";
 import {Dish} from "../entities/dish";
+import {Ingredient} from "../entities/ingredient";
 
 export interface IFoodService {
-    findRelevantDishes(products: Product[], cookingAppliances?: CookingAppliance[]): Promise<Dish[]>
+    findRelevantDishes(products: Ingredient[]): Promise<Dish[]>
 }
 
 export class FoodService implements IFoodService {
-    async findRelevantDishes(products: Product[], cookingAppliances?: CookingAppliance[]): Promise<Dish[]> {
-        const productsQuery = products.map(p => `may-contain=${p.id}`).join('&')
-        const appliancesQuery = cookingAppliances === undefined
-            ? ''
-            : '&' + (cookingAppliances.map(ca => `cook-with=${ca.id}`).join('&'))
-        return await fetch(`/api/v1/dishes/relevant?page-size=10&page-number=1&${productsQuery}${appliancesQuery}`)
+    async findRelevantDishes(products: Ingredient[]): Promise<Dish[]> {
+        const productsQuery = products.map(p => `include=${p.id}`).join('&')
+        return await fetch(`/api/v1/dishes/relevant?size=10&page=1&${productsQuery}`, {
+            method: 'POST'
+        })
             .then(res => res.json())
     }
 }

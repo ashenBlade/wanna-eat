@@ -1,38 +1,31 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Product} from "../../entities/product";
+import {Ingredient} from "../../entities/ingredient";
 import {Dish} from "../../entities/dish";
-import {IProductsRepository} from "../../services/productsRepository";
-import {IDishesRepository} from "../../services/dishesRepository";
+import {IIngredientsRepository} from "../../services/ingredientsRepository";
 import {IFoodService} from "../../services/foodService";
 import './Products.tsx.css';
 import FoodList from "../FoodList/FoodList";
-import CookingApplianceMenu from "../CookingApplianceMenu/CookingApplianceMenu";
-import {ICookingApplianceRepository} from "../../services/cookingApplianceRepository";
-import { CookingAppliance } from '../../entities/cooking-appliance';
 
 interface ProductsPageProps {
-    productsRepository: IProductsRepository
-    dishesRepository: IDishesRepository
+    ingredientsRepository: IIngredientsRepository
     foodService: IFoodService
-    cookingApplianceRepository: ICookingApplianceRepository
 }
 
-const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, foodService, cookingApplianceRepository}) => {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
-    const moveToSelected = (product: Product) => {
+const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) => {
+    const [products, setProducts] = useState<Ingredient[]>([]);
+    const [selectedProducts, setSelectedProducts] = useState<Ingredient[]>([]);
+    const moveToSelected = (product: Ingredient) => {
         setProducts([...products.filter(p => p.id !== product.id)])
         setSelectedProducts([...selectedProducts, product])
     }
     
-    const moveToProducts = (product: Product) => {
+    const moveToProducts = (product: Ingredient) => {
         setSelectedProducts([...selectedProducts.filter(sp => sp.id !== product.id)])
         setProducts([...products, product])
     }
     const [currentProductsPage, setCurrentProductsPage] = useState(1)
     
     const [dishes, setDishes] = useState<Dish[]>([]);
-    const [cookingAppliances, setCookingAppliances] = useState<CookingAppliance[]>([]);
     const [dishesNotFoundMessage, setDishesNotFoundMessage] = useState('Здесь появится, то что можно приготовить');
     
     const [searchTimeout, setSearchTimeout] = useState(0);
@@ -43,11 +36,8 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     const defaultPageSize = 15
     
     useEffect(() => {
-        productsRepository.getProductsAsync(1, defaultPageSize).then(products => {
+        ingredientsRepository.getProductsAsync(1, defaultPageSize).then(products => {
             setProducts(products)
-        })
-        cookingApplianceRepository.getCookingAppliancesAsync(1, defaultPageSize).then(a => {
-            setCookingAppliances(a)
         })
     }, [])
 
@@ -56,14 +46,14 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     }
     const loadNextProductsPage = () => {
         if (productSearchName.length >= 3) {
-            productsRepository.findWithName(productSearchName, currentProductsPage + 1, defaultPageSize).then(loaded => {
+            ingredientsRepository.findWithName(productSearchName, currentProductsPage + 1, defaultPageSize).then(loaded => {
                 console.log(loaded)
                 setProducts([...products, ...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
                 setCurrentProductsPage(currentProductsPage + 1)
                 console.log('New page set')
             })
         } else {
-            productsRepository.getProductsAsync(currentProductsPage + 1, defaultPageSize).then(loaded => {
+            ingredientsRepository.getProductsAsync(currentProductsPage + 1, defaultPageSize).then(loaded => {
                 console.log(loaded)
                 setProducts([...products, ...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
                 setCurrentProductsPage(currentProductsPage + 1)
@@ -84,7 +74,7 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     const searchProductsByName = (name: string) => {
         if (name.length < 3) {
             if (name.length === 0)
-                productsRepository.getProductsAsync(1, defaultPageSize).then(loaded => {
+                ingredientsRepository.getProductsAsync(1, defaultPageSize).then(loaded => {
                     console.log(loaded)
                     setProducts([...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))]);
                     setCurrentProductsPage(1)
@@ -92,7 +82,7 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
             return;
         }
         
-        productsRepository.findWithName(name, 1, defaultPageSize).then(loaded => {
+        ingredientsRepository.findWithName(name, 1, defaultPageSize).then(loaded => {
             setProducts([...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
             setCurrentProductsPage(1)
         });
@@ -107,11 +97,11 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     }, [selectedProducts])
     
 
-    const selectedProductOnChoose = (sp: Product) => {
+    const selectedProductOnChoose = (sp: Ingredient) => {
         moveToProducts(sp)
     }
     
-    const productOnChoose = (p: Product) => {
+    const productOnChoose = (p: Ingredient) => {
         moveToSelected(p)
     }
     
@@ -119,7 +109,7 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
     
     const onCalculateButtonClick = () => {
         setCalculateButtonEnabled(false)
-        foodService.findRelevantDishes(selectedProducts, cookingAppliances).then(d => {
+        foodService.findRelevantDishes(selectedProducts).then(d => {
             setDishesNotFoundMessage(d.length === 0 
                 ? 'Ничего не нашлось('
                 : '');
@@ -138,11 +128,7 @@ const Products: FC<ProductsPageProps> = ({productsRepository, dishesRepository, 
                                onChange={e => setProductSearchName(e.currentTarget.value)}/>
                     </div>
                 </div>
-                <div>
-                    <div className={'d-flex justify-content-center p-2'}>
-                        <CookingApplianceMenu applianceChangeCallback={selected => {}} appliances={cookingAppliances}/>
-                    </div>
-                </div>
+                <div/>
                 <div>
                     <button className={'btn btn-success'} onClick={onCalculateButtonClick} disabled={!calculateButtonEnabled}>Подсчитать</button>
                 </div>
