@@ -1,6 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 using WannaEat.Web.Interfaces;
 using WannaEat.Web.Services;
 using WannaEat.Web.Services.RecipeServices;
@@ -9,20 +7,35 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
        .AddControllers()
-       .AddNewtonsoftJson(newtonsoft =>
-        {
-            newtonsoft.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-        });
+       .AddNewtonsoftJson();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IRecipeService, MZRRecipeService>();
 builder.Services.AddDbContext<WannaEatDbContext>(db =>
 {
-    db.UseNpgsql(builder.Configuration.GetConnectionString("WannaEat"));
-    db.EnableSensitiveDataLogging();
-    if (builder.Environment.IsDevelopment())
+    string GetConnectionString()
     {
-        db.EnableDetailedErrors();
+        if (!builder.Configuration.GetValue<bool>("HEROKU_APP"))
+            return builder.Configuration.GetConnectionString("WannaEat");
+        
+        var uri = new UriBuilder(builder.Configuration.GetValue<string>("DATABASE_URL")).Uri;
+        var userInfo = uri.UserInfo.Split(':');
+        var (user, password) = ( userInfo[0], userInfo[1] );
+        return
+            $"Host={uri.Host};"
+          + $"Database={uri.AbsolutePath};"
+          + $"Port={uri.Port};"
+          + $"User Id={user};"
+          + $"Password={password}";
+
     }
+
+    db.UseNpgsql(GetConnectionString());
+    
+    if (builder.Environment.IsProduction()) 
+        return;
+    
+    db.EnableSensitiveDataLogging();
+    db.EnableDetailedErrors();
 });
 
 var app = builder.Build();
