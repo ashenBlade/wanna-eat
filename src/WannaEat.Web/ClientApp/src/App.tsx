@@ -1,4 +1,4 @@
-import NavBar from "./components/NavBar";
+import NavBar from "./components/NavBar/NavBar";
 import Products from "./components/Products/Products";
 import {IngredientsRepository} from "./services/ingredientsRepository";
 import {FoodService} from "./services/foodService";

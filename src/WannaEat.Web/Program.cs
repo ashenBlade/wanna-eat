@@ -12,8 +12,7 @@ builder.Services
         {
             newtonsoft.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
         });
-builder.Services.AddHttpClient<HttpClient>();
-builder.Services.AddScoped<IRecipeService, MZRRecipeService>();
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IRecipeService, MZRRecipeService>();
 builder.Services.AddDbContext<WannaEatDbContext>(db =>
 {

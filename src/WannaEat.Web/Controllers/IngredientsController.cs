@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WannaEat.Web.Dto.Product;
 using WannaEat.Web.Infrastructure.Attributes;
 using WannaEat.Web.Models;
 using WannaEat.Web.Services;
@@ -42,7 +43,7 @@ public class IngredientsController: ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Ingredient?>> GetIngredientById(
+    public async Task<ActionResult<ReadIngredientDto?>> GetIngredientById(
         [FromRoute(Name = "id")] 
         [Required]
         int id)
@@ -52,11 +53,15 @@ public class IngredientsController: ControllerBase
                                        .FindAsync(id);
         return ingredient is null
                    ? NotFound()
-                   : Ok(ingredient);
+                   : Ok(new ReadIngredientDto()
+                        {
+                            Id = ingredient.Id,
+                            Name = ingredient.Name
+                        });
     }
 
     [HttpGet("search")]
-    public async Task<ActionResult<ICollection<Ingredient>>> SearchByName(
+    public async Task<ActionResult<ICollection<ReadIngredientDto>>> SearchByName(
         [FromQuery(Name = "name")] 
         [Required] 
         string name,
@@ -71,10 +76,13 @@ public class IngredientsController: ControllerBase
     {
         _logger.LogTrace(nameof(SearchByName) + "(name={Name},page={Page},size={Size}) requested", name, page, size);
         var ingredients = await _context.Ingredients
-                                        .Where(i => i.NameSearchVector.Matches(EF.Functions.PlainToTsQuery(name)))
-                                        .Take(( page - 1 ) * size)
-                                        .Skip(size)
+                                        .Where(i => i.NameSearchVector.Matches(EF.Functions.PlainToTsQuery("russian", name)))
+                                        .OrderBy(i => i.NameSearchVector.Rank(EF.Functions.PlainToTsQuery("russian", name)))
+                                        .ThenBy(i => i.Name)
+                                        .Skip(( page - 1 ) * size)
+                                        .Take(size)
                                         .ToListAsync();
-        return Ok(ingredients);
+        
+        return Ok(ingredients.Select(i => new ReadIngredientDto{Id = i.Id, Name = i.Name}));
     }
 }

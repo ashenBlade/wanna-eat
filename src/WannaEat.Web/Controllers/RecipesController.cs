@@ -12,16 +12,17 @@ namespace WannaEat.Web.Controllers;
 [Route("api/v1/recipes")]
 public class RecipesController: ControllerBase
 {
-    private readonly ICollection<IRecipeService> _recipeServices;
+    private readonly IEnumerable<IRecipeService> _recipeServices;
     private readonly WannaEatDbContext _context;
 
-    public RecipesController(ICollection<IRecipeService> recipeServices, WannaEatDbContext context)
+    public RecipesController(IEnumerable<IRecipeService> recipeServices, WannaEatDbContext context)
     {
         _recipeServices = recipeServices;
         
         _context = context;
     }
 
+    [HttpGet("search")]
     public async Task<ActionResult<ICollection<Ingredient>>> GetSatisfiedRecipes(
         [FromQuery(Name = "contain")] [Required]
         int[] productIds,
@@ -30,7 +31,7 @@ public class RecipesController: ControllerBase
         [FromQuery(Name = "size")] [Required] [Range(1, 100)]
         int size)
     {
-        var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         var products = await FindAllProductsByIdsAsync(productIds, page, size);
         var recipes = await Task.WhenAll(_recipeServices.Select(service => service.GetRecipesForIngredients(products, tokenSource.Token)))
                                 .ContinueWith(task => task.Result.SelectMany(r => r), tokenSource.Token);

@@ -4,33 +4,15 @@ import {Food} from "../../entities/food";
 
 export interface FoodListProps<TFood extends Food> {
     foods: TFood[],
-    onChoose?: ((product: TFood) => void) | undefined,
+    onChoose?: ((product: TFood) => void),
     emptyListPlaceholder?: string,
     onScrollToEnd?: () => (void)
 }
 
-const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onScrollToEnd}: FoodListProps<TFood>) => {
+const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose}: FoodListProps<TFood>) => {
     const placeholder = emptyListPlaceholder ?? '';
     
-    const [observer, setObserver] = useState(new IntersectionObserver((entries, observer1) => {
-        if (onScrollToEnd) {
-            onScrollToEnd()
-        }
-    }))
-    const lastElementRef = useRef(null)
-    useEffect(() => {
-        if (lastElementRef.current !== null) {
-                observer.observe(lastElementRef.current)
-            
-        } else {
-            setTimeout(() => {
-                if (lastElementRef.current !== null)
-                    observer.observe(lastElementRef.current)    
-                else
-                    console.log('Again null')
-            }, 1000)
-        }
-    }, [lastElementRef])
+    const onChooseInner = (f: TFood) => onChoose ? onChoose(f) : null;
     
     return (
         <div className={'h-100'}>
@@ -43,14 +25,13 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onScrollToEn
                             foods.length > 0 
                                 ? 
                                 foods.map(f => (
-                                    <li key={f.name} value={f.name} 
+                                    <li key={f.name} onClick={e => onChooseInner(f)} value={f.name} 
                                         className={'list-group-item cursor-pointer'}>
                                         {f.name}
                                     </li>))
                                 :
                                     <p className={'text-center text-black'}>{placeholder}</p>
                         }
-                                    <li style={{backgroundColor: 'red'}} ref={lastElementRef}/>
                     </ul>
                 </div>
             </div>

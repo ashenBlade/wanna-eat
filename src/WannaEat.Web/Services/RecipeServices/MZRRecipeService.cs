@@ -1,3 +1,7 @@
+using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using WannaEat.Web.Interfaces;
 using WannaEat.Web.Models;
@@ -20,22 +24,28 @@ public class MZRRecipeService: IRecipeService
 
     public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(ICollection<Ingredient> ingredients, CancellationToken token)
     {
-        var payload = GetPayload(ingredients);
         try
         {
-            var response =
-                await _client.PostAsync("https://fs2.tvoydnevnik.com/api2/recipe_search/search", payload, token);
+            using var message =
+                new HttpRequestMessage(HttpMethod.Post, "https://fs2.tvoydnevnik.com/api2/recipe_search/search");
+            message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            // message.Headers.Host = string.Empty;
+            message.Content = GetPayload(ingredients);
+            using var response =
+                await _client.SendAsync(message, token);
             response.EnsureSuccessStatusCode();
-            var mzr = await response.Content.ReadFromJsonAsync<MZRResponse>(cancellationToken: token);
+            // var str = await response.Content.ReadAsStringAsync(token);
+            var mzr = await response.Content.ReadFromJsonAsync<MZRResponse>(new JsonSerializerOptions(JsonSerializerDefaults.Web), token);
             if (mzr is null)
             {
                 _logger.LogWarning("Could not parse JSON from response");
                 return Enumerable.Empty<Recipe>();
             }
-            var recipes = mzr.Result.Recipes
+            var recipes = mzr.Result
+                             .Recipes
                              .Select(f => new Recipe
                                           {
-                                              Link = new Uri(f.Food.Uri),
+                                              Link = new Uri($"{f.Domain}{f.Food.Link}"),
                                               Name = f.Food.Name,
                                               ImageUrl = new Uri(f.Food.ImageUrl)
                                           });
@@ -55,16 +65,15 @@ public class MZRRecipeService: IRecipeService
 
     private static FormUrlEncodedContent GetPayload(ICollection<Ingredient> ingredients)
     {
-        var ingredientsString = string.Join(',', ingredients.Select(i => Uri.EscapeDataString(i.Name)));
+        var ingredientsString = string.Join(',', ingredients.Select(i => i.Name.Trim(' ')));
         return new FormUrlEncodedContent(new KeyValuePair<string, string>[]
                                          {
                                              new("jwt", "false"), 
-                                             new("query[page]", "q"),
+                                             new("query[page]", "1"),
                                              new("query[sort][date]", "desc"),
-                                             new("query[isEmpty]", "false"), 
                                              new("query[ingredients]", ingredientsString),
                                              new("platformId", "101"),
-                                             new("query[count_on_page]", "10")
+                                             new("query[count_on_page]", "10"),
                                          });
     }
 
@@ -72,31 +81,33 @@ public class MZRRecipeService: IRecipeService
     
     private class MZRResponse
     {
-        [JsonProperty("result")]
+        [JsonPropertyName("result")]
         public MZRResult Result { get; set; }
     }
 
-    class MZRResult
+    private class MZRResult
     {
-        [JsonProperty("list")]
-        public ICollection<MZRRecipe> Recipes { get; set; }
+        [JsonPropertyName("list")]
+        public MZRRecipe[] Recipes { get; set; }
     }
 
-    class MZRRecipe
+    private class MZRRecipe
     {
-        [JsonProperty("food")]
+        [JsonPropertyName("food")]
         public MZRFood Food { get; set; }
+        [JsonPropertyName("domain")]
+        public string Domain { get; set; }
     }
 
-    class MZRFood
+    private class MZRFood
     {
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [JsonProperty("url")]
-        public string Uri { get; set; }
+        [JsonPropertyName("url")]
+        public string Link { get; set; }
 
-        [JsonProperty("photo360200")]
+        [JsonPropertyName("photo360200")]
         public string ImageUrl { get; set; }
     }
 

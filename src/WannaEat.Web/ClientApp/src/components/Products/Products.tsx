@@ -1,6 +1,6 @@
 import React, {FC, useEffect, useState} from 'react';
 import {Ingredient} from "../../entities/ingredient";
-import {Dish} from "../../entities/dish";
+import {Recipe} from "../../entities/recipe";
 import {IIngredientsRepository} from "../../services/ingredientsRepository";
 import {IFoodService} from "../../services/foodService";
 import './Products.tsx.css';
@@ -25,7 +25,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     }
     const [currentProductsPage, setCurrentProductsPage] = useState(1)
     
-    const [dishes, setDishes] = useState<Dish[]>([]);
+    const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [dishesNotFoundMessage, setDishesNotFoundMessage] = useState('Здесь появится, то что можно приготовить');
     
     const [searchTimeout, setSearchTimeout] = useState(0);
@@ -81,8 +81,9 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                 })
             return;
         }
-        
+        console.log('asdf')
         ingredientsRepository.findWithName(name, 1, defaultPageSize).then(loaded => {
+            console.log(loaded)
             setProducts([...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
             setCurrentProductsPage(1)
         });
@@ -113,9 +114,14 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
             setDishesNotFoundMessage(d.length === 0 
                 ? 'Ничего не нашлось('
                 : '');
-            setDishes(d);
+            setRecipes(d);
             setCalculateButtonEnabled(true);
         })
+    }
+    
+    const redirectToRecipe = (r: Recipe) => {
+        console.log(r.link)
+        window.open(r.link, '_blank');
     }
     
     return (
@@ -133,15 +139,13 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                     <button className={'btn btn-success'} onClick={onCalculateButtonClick} disabled={!calculateButtonEnabled}>Подсчитать</button>
                 </div>
                 <div title={'Что можно выбрать'} className={'grounded p-1 pb-2'}>
-                    <FoodList onChoose={productOnChoose} onScrollToEnd={() => {
-                        loadNextProductsPage()
-                    }} foods={products}/>
+                    <FoodList onChoose={productOnChoose} foods={products}/>
                 </div>
                 <div title={'Что у вас имеется'} className={'grounded p-1 pb-2'}>
                     <FoodList onChoose={selectedProductOnChoose} foods={selectedProducts} emptyListPlaceholder={'Выберите продукты из списка слева'}/>
                 </div>
                 <div title={'Что можно приготовить'} className={'grounded p-1 pb-2'}>
-                    <FoodList foods={dishes} emptyListPlaceholder={dishesNotFoundMessage}/>
+                    <FoodList foods={recipes} onChoose={redirectToRecipe} emptyListPlaceholder={dishesNotFoundMessage}/>
                 </div>
             </div>
         </div>
