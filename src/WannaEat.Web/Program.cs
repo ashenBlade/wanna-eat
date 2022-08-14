@@ -1,9 +1,18 @@
 using Microsoft.EntityFrameworkCore;
+using WannaEat.Web;
 using WannaEat.Web.Interfaces;
 using WannaEat.Web.Services;
 using WannaEat.Web.Services.RecipeServices;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (builder.Configuration.IsHeroku())
+{
+    builder.WebHost.ConfigureKestrel(kestrel =>
+    {
+        kestrel.ListenAnyIP(builder.Configuration.GetValue<int>("PORT"));
+    });
+}
 
 builder.Services
        .AddControllers()
@@ -14,7 +23,7 @@ builder.Services.AddDbContext<WannaEatDbContext>(db =>
 {
     string GetConnectionString()
     {
-        if (!builder.Configuration.GetValue<bool>("HEROKU_APP"))
+        if (!builder.Configuration.IsHeroku())
             return builder.Configuration.GetConnectionString("WannaEat");
         
         var uri = new UriBuilder(builder.Configuration.GetValue<string>("DATABASE_URL")).Uri;
