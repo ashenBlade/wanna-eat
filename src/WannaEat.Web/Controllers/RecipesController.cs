@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WannaEat.Web.Dto.Dish;
 using WannaEat.Web.Infrastructure.Attributes;
 using WannaEat.Web.Interfaces;
 using WannaEat.Web.Models;
@@ -35,7 +36,12 @@ public class RecipesController: ControllerBase
         var products = await FindAllProductsByIdsAsync(productIds, page, size);
         var recipes = await Task.WhenAll(_recipeServices.Select(service => service.GetRecipesForIngredients(products, tokenSource.Token)))
                                 .ContinueWith(task => task.Result.SelectMany(r => r), tokenSource.Token);
-        return Ok(recipes);
+        return Ok(recipes.Select(r => new ReadRecipeDto
+                                      {
+                                          Name = r.Name,
+                                          ImageUrl = r.ImageUrl?.ToString(),
+                                          SourceUrl = r.Link.ToString()
+                                      }));
     }
 
     private Task<List<Ingredient>> FindAllProductsByIdsAsync(int[] productIds, int page, int size)

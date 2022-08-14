@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using WannaEat.Web.Interfaces;
 using WannaEat.Web.Services;
+using WannaEat.Web.Services.RecipeServices;
 
 var builder = WebApplication.CreateBuilder(args);
 

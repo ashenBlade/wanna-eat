@@ -4,7 +4,7 @@ using WannaEat.Web.Infrastructure.Attributes;
 
 namespace WannaEat.Web.Dto.Dish;
 
-public class GetRelevantDishesDto
+public class GetRelevantRecipesDto
 {
     [Required]
     [Positive]

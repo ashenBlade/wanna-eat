@@ -1,16 +1,11 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.WebUtilities;
-using Newtonsoft.Json;
 using WannaEat.Web.Interfaces;
 using WannaEat.Web.Models;
 
-namespace WannaEat.Web.Services;
+namespace WannaEat.Web.Services.RecipeServices;
 
-/// <summary>
-/// Recipe Service uses 
-/// </summary>
 public class MZRRecipeService: IRecipeService
 {
     private readonly HttpClient _client;
@@ -29,12 +24,10 @@ public class MZRRecipeService: IRecipeService
             using var message =
                 new HttpRequestMessage(HttpMethod.Post, "https://fs2.tvoydnevnik.com/api2/recipe_search/search");
             message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            // message.Headers.Host = string.Empty;
             message.Content = GetPayload(ingredients);
             using var response =
                 await _client.SendAsync(message, token);
             response.EnsureSuccessStatusCode();
-            // var str = await response.Content.ReadAsStringAsync(token);
             var mzr = await response.Content.ReadFromJsonAsync<MZRResponse>(new JsonSerializerOptions(JsonSerializerDefaults.Web), token);
             if (mzr is null)
             {
