@@ -31,7 +31,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     const [searchTimeout, setSearchTimeout] = useState(0);
     const [productSearchName, setProductSearchName] = useState('');
     
-    const searchDelaySeconds = 0.5;
+    const searchDelaySeconds = 0.2;
     
     const defaultPageSize = 15
     
@@ -50,7 +50,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                 console.log(loaded)
                 setProducts([...products, ...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
                 setCurrentProductsPage(currentProductsPage + 1)
-                console.log('New page set')
             })
         } else {
             ingredientsRepository.getProductsAsync(currentProductsPage + 1, defaultPageSize).then(loaded => {
@@ -75,23 +74,16 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         if (name.length < 3) {
             if (name.length === 0)
                 ingredientsRepository.getProductsAsync(1, defaultPageSize).then(loaded => {
-                    console.log(loaded)
                     setProducts([...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))]);
                     setCurrentProductsPage(1)
                 })
             return;
         }
-        console.log('asdf')
         ingredientsRepository.findWithName(name, 1, defaultPageSize).then(loaded => {
-            console.log(loaded)
             setProducts([...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
             setCurrentProductsPage(1)
         });
     }
-    
-    useEffect(() => {
-        console.log('Current page:', currentProductsPage)
-    }, [currentProductsPage])
     
     useEffect(() => {
         setCalculateButtonEnabled(selectedProducts.length !== 0)
@@ -120,8 +112,8 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     }
     
     const redirectToRecipe = (r: Recipe) => {
-        console.log(r.link)
-        window.open(r.link, '_blank');
+        console.log(r.originUrl)
+        window.open(r.originUrl, '_blank');
     }
     
     return (
