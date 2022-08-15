@@ -40,7 +40,7 @@ public class RecipesController: ControllerBase
                                       {
                                           Name = r.Name,
                                           ImageUrl = r.ImageUrl?.ToString(),
-                                          SourceUrl = r.Link.ToString()
+                                          OriginUrl = r.Link.ToString()
                                       }));
     }
 

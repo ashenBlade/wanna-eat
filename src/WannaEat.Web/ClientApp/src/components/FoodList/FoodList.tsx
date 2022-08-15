@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React from 'react';
 import './FoodList.tsx.css'
 import {Food} from "../../entities/food";
 

@@ -2,5 +2,5 @@ import {Food} from "./food";
 
 export interface Recipe extends Food {
     readonly imageUrl?: string
-    readonly link: string
+    readonly originUrl: string
 }
