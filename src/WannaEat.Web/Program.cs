@@ -25,17 +25,8 @@ builder.Services.AddDbContext<WannaEatDbContext>(db =>
     {
         if (!builder.Configuration.IsHeroku())
             return builder.Configuration.GetConnectionString("WannaEat");
-        
-        var uri = new UriBuilder(builder.Configuration.GetValue<string>("DATABASE_URL")).Uri;
-        var userInfo = uri.UserInfo.Split(':');
-        var (user, password) = ( userInfo[0], userInfo[1] );
-        return
-            $"Host={uri.Host};"
-          + $"Database={uri.AbsolutePath};"
-          + $"Port={uri.Port};"
-          + $"User Id={user};"
-          + $"Password={password}";
-
+        var uri = new UriBuilder(builder.Configuration.GetValue<string>("DATABASE_URL"));
+        return $"Host={uri.Host};Database={uri.Path.Trim('/')};Port={uri.Port};User Id={uri.UserName};Password={uri.Password}";
     }
 
     db.UseNpgsql(GetConnectionString());
