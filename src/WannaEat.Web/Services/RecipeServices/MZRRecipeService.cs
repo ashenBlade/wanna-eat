@@ -1,8 +1,8 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using WannaEat.Web.Interfaces;
-using WannaEat.Web.Models;
+using WannaEat.Domain.Entities;
+using WannaEat.Domain.Interfaces;
 
 namespace WannaEat.Web.Services.RecipeServices;
 
@@ -17,7 +17,7 @@ public class MZRRecipeService: IRecipeService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(ICollection<Ingredient> ingredients, CancellationToken token)
+    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients, CancellationToken token)
     {
         try
         {
@@ -36,12 +36,7 @@ public class MZRRecipeService: IRecipeService
             }
             var recipes = mzr.Result
                              .Recipes
-                             .Select(f => new Recipe
-                                          {
-                                              Link = new Uri($"{f.Domain}{f.Food.Link}"),
-                                              Name = f.Food.Name,
-                                              ImageUrl = new Uri(f.Food.ImageUrl)
-                                          });
+                             .Select(f => new Recipe(f.Food.Name, new Uri($"{f.Domain}{f.Food.Link}"), new Uri(f.Food.ImageUrl)));
             return recipes;
         }
         catch (TaskCanceledException canceled)
@@ -56,7 +51,7 @@ public class MZRRecipeService: IRecipeService
         }
     }
 
-    private static FormUrlEncodedContent GetPayload(ICollection<Ingredient> ingredients)
+    private static FormUrlEncodedContent GetPayload(IEnumerable<Ingredient> ingredients)
     {
         var ingredientsString = string.Join(',', ingredients.Select(i => i.Name.Trim(' ')));
         return new FormUrlEncodedContent(new KeyValuePair<string, string>[]

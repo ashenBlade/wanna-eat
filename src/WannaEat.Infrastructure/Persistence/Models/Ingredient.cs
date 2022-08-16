@@ -1,6 +1,6 @@
 using NpgsqlTypes;
 
-namespace WannaEat.Web.Models;
+namespace WannaEat.Infrastructure.Persistence.Models;
 
 public class Ingredient
 {

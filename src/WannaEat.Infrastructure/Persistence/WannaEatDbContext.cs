@@ -1,10 +1,7 @@
-using System.Reflection;
-using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
-using WannaEat.Web.Models;
+using WannaEat.Infrastructure.Persistence.Models;
 
-namespace WannaEat.Web.Services;
+namespace WannaEat.Infrastructure.Persistence;
 
 public class WannaEatDbContext: DbContext
 {

@@ -1,6 +1,6 @@
-namespace WannaEat.Web.Dto.Dish;
+namespace WannaEat.Web.Dto.Recipe;
 
-public class ReadRecipeDto
+public class GetRecipeDto
 {
     public string? OriginUrl { get; set; }
     public string Name { get; set; } = null!;

@@ -1,11 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WannaEat.Infrastructure.Persistence;
 using WannaEat.Web.Dto.Product;
 using WannaEat.Web.Infrastructure.Attributes;
-using WannaEat.Web.Models;
-using WannaEat.Web.Services;
 
 namespace WannaEat.Web.Controllers;
 
@@ -23,7 +21,7 @@ public class IngredientsController: ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<Ingredient>> GetIngredientsPaged(
+    public async Task<ActionResult<GetIngredientDto>> GetIngredientsPaged(
         [FromQuery(Name = "page")]
         [Positive]
         [Required]
@@ -43,7 +41,7 @@ public class IngredientsController: ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ReadIngredientDto?>> GetIngredientById(
+    public async Task<ActionResult<GetIngredientDto?>> GetIngredientById(
         [FromRoute(Name = "id")] 
         [Required]
         int id)
@@ -53,7 +51,7 @@ public class IngredientsController: ControllerBase
                                        .FindAsync(id);
         return ingredient is null
                    ? NotFound()
-                   : Ok(new ReadIngredientDto()
+                   : Ok(new GetIngredientDto()
                         {
                             Id = ingredient.Id,
                             Name = ingredient.Name
@@ -61,7 +59,7 @@ public class IngredientsController: ControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<ActionResult<ICollection<ReadIngredientDto>>> SearchByName(
+    public async Task<ActionResult<ICollection<GetIngredientDto>>> SearchByName(
         [FromQuery(Name = "name")] 
         [Required] 
         string name,
@@ -83,6 +81,6 @@ public class IngredientsController: ControllerBase
                                         .Take(size)
                                         .ToListAsync();
         
-        return Ok(ingredients.Select(i => new ReadIngredientDto{Id = i.Id, Name = i.Name}));
+        return Ok(ingredients.Select(i => new GetIngredientDto{Id = i.Id, Name = i.Name}));
     }
 }
