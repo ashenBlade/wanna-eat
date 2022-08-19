@@ -13,6 +13,7 @@ WORKDIR /src
 
 COPY ["src/WannaEat.Domain", "WannaEat.Domain"]
 COPY ["src/WannaEat.Infrastructure", "WannaEat.Infrastructure"]
+COPY ["src/WannaEat.FoodService.MZR", "WannaEat.FoodService.MZR"]
 COPY ["src/WannaEat.Web", "WannaEat.Web"]
 COPY ["src/WannaEat.sln", "."]
 RUN dotnet restore WannaEat.sln
