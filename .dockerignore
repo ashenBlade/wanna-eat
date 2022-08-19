@@ -1,4 +1,5 @@
 ﻿**/.dockerignore
+**/.idea
 **/.env
 **/.git
 **/.gitignore

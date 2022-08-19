@@ -10,14 +10,18 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
-COPY ["WannaEat.Web.csproj", "."]
-RUN dotnet restore "WannaEat.Web.csproj"
-COPY . .
+
+COPY ["src/WannaEat.Domain", "WannaEat.Domain"]
+COPY ["src/WannaEat.Infrastructure", "WannaEat.Infrastructure"]
+COPY ["src/WannaEat.Web", "WannaEat.Web"]
+COPY ["src/WannaEat.sln", "."]
+RUN dotnet restore WannaEat.sln
+
 WORKDIR /src
-RUN dotnet build "WannaEat.Web.csproj" -c Release -o /app/build
+RUN dotnet build WannaEat.Web/WannaEat.Web.csproj -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "WannaEat.Web.csproj" -c Release -o /app/publish
+RUN dotnet publish "WannaEat.Web/WannaEat.Web.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app/publish

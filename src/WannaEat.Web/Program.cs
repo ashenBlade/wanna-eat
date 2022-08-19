@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using WannaEat.Domain.Interfaces;
+using WannaEat.FoodService.MZR;
+using WannaEat.Infrastructure.Persistence;
 using WannaEat.Web;
-using WannaEat.Web.Interfaces;
-using WannaEat.Web.Services;
-using WannaEat.Web.Services.RecipeServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
