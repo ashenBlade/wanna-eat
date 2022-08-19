@@ -1,10 +1,12 @@
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
 using WannaEat.Domain.Entities;
 using WannaEat.Domain.Interfaces;
+using WannaEat.FoodService.MZR.Models;
 
-namespace WannaEat.Web.Services.RecipeServices;
+namespace WannaEat.FoodService.MZR;
 
 public class MZRRecipeService: IRecipeService
 {
@@ -17,7 +19,7 @@ public class MZRRecipeService: IRecipeService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients, CancellationToken token)
+    public async Task<IEnumerable<Domain.Entities.Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients, CancellationToken token)
     {
         try
         {
@@ -28,26 +30,28 @@ public class MZRRecipeService: IRecipeService
             using var response =
                 await _client.SendAsync(message, token);
             response.EnsureSuccessStatusCode();
-            var mzr = await response.Content.ReadFromJsonAsync<MZRResponse>(new JsonSerializerOptions(JsonSerializerDefaults.Web), token);
+            var mzr = await response
+                           .Content
+                           .ReadFromJsonAsync<Response>(new JsonSerializerOptions(JsonSerializerDefaults.Web), token);
             if (mzr is null)
             {
                 _logger.LogWarning("Could not parse JSON from response");
-                return Enumerable.Empty<Recipe>();
+                return Enumerable.Empty<Domain.Entities.Recipe>();
             }
             var recipes = mzr.Result
                              .Recipes
-                             .Select(f => new Recipe(f.Food.Name, new Uri($"{f.Domain}{f.Food.Link}"), new Uri(f.Food.ImageUrl)));
+                             .Select(f => new Domain.Entities.Recipe(f.Food.Name, new Uri($"{f.Domain}{f.Food.Link}"), new Uri(f.Food.ImageUrl)));
             return recipes;
         }
         catch (TaskCanceledException canceled)
         {
             _logger.LogWarning(canceled, "Could not download and parse recipes. Task was cancelled from cancellation token");
-            return Enumerable.Empty<Recipe>();
+            return Enumerable.Empty<Domain.Entities.Recipe>();
         }
         catch (HttpRequestException http)
         {
             _logger.LogWarning(http, "Could not download recipes. Error while HTTP request");
-            return Enumerable.Empty<Recipe>();
+            return Enumerable.Empty<Domain.Entities.Recipe>();
         }
     }
 
@@ -64,40 +68,4 @@ public class MZRRecipeService: IRecipeService
                                              new("query[count_on_page]", "10"),
                                          });
     }
-
-    #region JSON parsing classes
-    
-    private class MZRResponse
-    {
-        [JsonPropertyName("result")]
-        public MZRResult Result { get; set; }
-    }
-
-    private class MZRResult
-    {
-        [JsonPropertyName("list")]
-        public MZRRecipe[] Recipes { get; set; }
-    }
-
-    private class MZRRecipe
-    {
-        [JsonPropertyName("food")]
-        public MZRFood Food { get; set; }
-        [JsonPropertyName("domain")]
-        public string Domain { get; set; }
-    }
-
-    private class MZRFood
-    {
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
-
-        [JsonPropertyName("url")]
-        public string Link { get; set; }
-
-        [JsonPropertyName("photo360200")]
-        public string ImageUrl { get; set; }
-    }
-
-    #endregion
 }

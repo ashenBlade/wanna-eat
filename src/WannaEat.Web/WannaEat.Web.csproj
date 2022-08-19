@@ -30,6 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\WannaEat.FoodService.MZR\WannaEat.FoodService.MZR.csproj" />
       <ProjectReference Include="..\WannaEat.Infrastructure\WannaEat.Infrastructure.csproj" />
     </ItemGroup>
 
