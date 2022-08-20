@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WannaEat.Domain.Interfaces;
+using WannaEat.FoodService.MMenu;
 using WannaEat.FoodService.MZR;
 using WannaEat.Infrastructure.Persistence;
 using WannaEat.Web;
@@ -19,6 +20,7 @@ builder.Services
        .AddNewtonsoftJson();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IRecipeService, MZRRecipeService>();
+builder.Services.AddScoped<IRecipeService, MMenuRecipeService>();
 builder.Services.AddDbContext<WannaEatDbContext>(db =>
 {
     string GetConnectionString()

@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WannaEat.FoodService.MZR", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WannaEat.FoodService", "WannaEat.FoodService", "{17D36D4A-D339-4BA9-819F-891BCED65FC3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WannaEat.FoodService.MMenu", "WannaEat.FoodService.MMenu\WannaEat.FoodService.MMenu.csproj", "{456E6563-96D9-47AC-BC92-0CB5B3F733C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +34,13 @@ Global
 		{6EC35FDA-B79A-47B8-99D9-FCB07B0788AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EC35FDA-B79A-47B8-99D9-FCB07B0788AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EC35FDA-B79A-47B8-99D9-FCB07B0788AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{456E6563-96D9-47AC-BC92-0CB5B3F733C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{456E6563-96D9-47AC-BC92-0CB5B3F733C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{456E6563-96D9-47AC-BC92-0CB5B3F733C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{456E6563-96D9-47AC-BC92-0CB5B3F733C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6EC35FDA-B79A-47B8-99D9-FCB07B0788AA} = {17D36D4A-D339-4BA9-819F-891BCED65FC3}
+		{456E6563-96D9-47AC-BC92-0CB5B3F733C3} = {17D36D4A-D339-4BA9-819F-891BCED65FC3}
 	EndGlobalSection
 EndGlobal
