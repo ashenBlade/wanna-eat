@@ -19,7 +19,7 @@ builder.Services
        .AddControllers()
        .AddNewtonsoftJson();
 builder.Services.AddHttpClient();
-// builder.Services.AddScoped<IRecipeService, MZRRecipeService>();
+builder.Services.AddScoped<IRecipeService, MZRRecipeService>();
 builder.Services.AddScoped<IIngredientSearcher, ParallelIngredientSearcher>();
 builder.Services.AddScoped<IRecipeService, MMenuRecipeService>();
 builder.Services.AddDbContext<WannaEatDbContext>(db =>
