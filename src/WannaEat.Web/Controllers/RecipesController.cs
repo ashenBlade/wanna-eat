@@ -32,7 +32,7 @@ public class RecipesController: ControllerBase
         [FromQuery(Name = "size")] [Required] [Range(1, 100)]
         int size)
     {
-        var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(100));
         var products = await FindAllProductsByIdsAsync(productIds, page, size);
         var recipes = await Task.WhenAll(_recipeServices.Select(service => service.GetRecipesForIngredients(products, tokenSource.Token)))
                                 .ContinueWith(task => task.Result.SelectMany(r => r), tokenSource.Token);

@@ -8,16 +8,14 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WannaEat.Domain\WannaEat.Domain.csproj" />
+      <ProjectReference Include="..\WannaEat.Shared\WannaEat.Shared.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Logging.Abstractions">
-        <HintPath>..\..\..\..\.dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.8\ref\net6.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-      </Reference>
-    </ItemGroup>
+    
 
     <ItemGroup>
       <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
     </ItemGroup>
 
 </Project>

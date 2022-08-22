@@ -8,6 +8,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WannaEat.Domain\WannaEat.Domain.csproj" />
+      <ProjectReference Include="..\WannaEat.FoodService.MMenu\WannaEat.FoodService.MMenu.csproj" />
+      <ProjectReference Include="..\WannaEat.Shared\WannaEat.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -16,8 +18,13 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.6" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="RecipeService\MMenu" />
     </ItemGroup>
 
 </Project>
