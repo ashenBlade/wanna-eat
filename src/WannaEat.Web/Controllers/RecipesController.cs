@@ -36,7 +36,8 @@ public class RecipesController: ControllerBase
         var products = await FindAllProductsByIdsAsync(productIds, page, size);
         var recipes = await Task.WhenAll(_recipeServices.Select(service => service.GetRecipesForIngredients(products, tokenSource.Token)))
                                 .ContinueWith(task => task.Result.SelectMany(r => r), tokenSource.Token);
-        return Ok(recipes.Select(r => new GetRecipeDto
+        var l = recipes.ToList();
+        return Ok(l.Select(r => new GetRecipeDto
                                       {
                                           Name = r.Name,
                                           ImageUrl = r.ImageUrl?.ToString(),

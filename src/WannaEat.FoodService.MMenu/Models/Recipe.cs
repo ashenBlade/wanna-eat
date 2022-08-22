@@ -3,11 +3,11 @@ namespace WannaEat.FoodService.MMenu.Models;
 public class Recipe
 {
     public string? Name { get; set; }
-    public string? SourceRelativeLink { get; set; }
-    public string? ImageUrl { get; set; }
+    public string? SourceAbsolutePath { get; set; }
+    public string? ImageAbsolutePath { get; set; }
     public RecipeAuthor? Author { get; set; }
 
-    private Uri SourceImageUri => new($"{Constants.BaseUrl}{ImageUrl}");
-    private Uri SourceUri => new($"{Constants.BaseUrl}{SourceRelativeLink}");
+    private Uri SourceImageUri => new($"{Constants.BaseUrl}{ImageAbsolutePath}");
+    private Uri SourceUri => new($"{Constants.BaseUrl}{SourceAbsolutePath}");
     public Domain.Entities.Recipe ToDomainRecipe() => new(Name, SourceUri, SourceImageUri);
 }

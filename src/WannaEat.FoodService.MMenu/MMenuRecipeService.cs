@@ -24,46 +24,40 @@ public class MMenuRecipeService: IRecipeService
     {
         var html = await DownloadRecipesPageForIngredients(ingredients, cancellationToken);
         _logger.LogInformation("Recipe HTML page was successfully downloaded. Starting parsing");
-        var searchResultNode = html.GetElementbyId("search-result");
-        if (searchResultNode is null)
-        {
-            _logger.LogWarning("'#search-result' was not found. Returning empty enumerable");
-            return Enumerable.Empty<Recipe>();
-        }
-        
-        var recipeNodes = searchResultNode.ChildNodes
-                                          .Where(static node => node.HasClass("mm-element"))
-                                          .ToList();
+        var recipeNodes = html
+                         .DocumentNode
+                         .SelectNodes(".//div[@id='search-result']/div[contains(@class, 'mm-element')]");
         
         return recipeNodes
               .Select(ParseRecipe)
               .Where(static r => r.Name is not null && 
-                                 r.SourceRelativeLink is not null)
+                                 r.SourceAbsolutePath is not null)
               .Select(static x => x.ToDomainRecipe());
     }
 
     private static Models.Recipe ParseRecipe(HtmlNode node)
     {
-        var nameNode = node.ChildNodes.FirstOrDefault(static node => node.HasClass("name"));
-        var name = nameNode ?.InnerText;
-        var sourceUrl = nameNode?.GetAttributeValue("href", null);
-        var authorNode = node.ChildNodes.FirstOrDefault(static node => node.HasClass("element-author"));
-        var authorName = authorNode?.InnerText;
-        var authorLink = authorNode?.GetAttributeValue("href", null);
-        var imgNode = node.ChildNodes
-                          .FirstOrDefault(static node => node.HasClass("element-photo"))
-                         ?.FirstChild;
-        var imageSourceLink = imgNode ?.GetAttributeValue("src", null);
+        var nameAnchor = node.SelectSingleNode(".//div[@class='name']/a");
+        var name = nameAnchor?.InnerText.Trim();
+        var sourceAbsolutePath = nameAnchor?.GetAttributeValue("href", null);
+        
+        var authorAnchor = node.SelectSingleNode(".//a[contains(@class, 'element-author')]");
+        var authorName = authorAnchor?.InnerText;
+        var authorAbsolutePath = authorAnchor?.GetAttributeValue("href", null);
+        
+        var imageAnchor = node.SelectSingleNode(".//img[@class='image']");
+        var imageAbsolutePath = imageAnchor?.GetAttributeValue("src", null);
+        
         return new Models.Recipe
                {
                    Author = new RecipeAuthor
                             {
                                 Name = authorName, 
-                                SourceRelativeUrl = authorLink
+                                SourceAbsolutePath = authorAbsolutePath
                             },
-                   ImageUrl = imageSourceLink,
+                   ImageAbsolutePath = imageAbsolutePath,
                    Name = name,
-                   SourceRelativeLink = sourceUrl
+                   SourceAbsolutePath = sourceAbsolutePath
                };
     } 
     
@@ -105,7 +99,7 @@ public class MMenuRecipeService: IRecipeService
                          + "time_end=180&"
                          + "city-fname=&"
                          + "gender=all&"
-                         + $"fname=&"
+                         + "fname=&"
                          + queryIds,
                }.Uri;
     }
