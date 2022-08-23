@@ -12,7 +12,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 WORKDIR /src
 
 COPY ["src/WannaEat.Domain", "WannaEat.Domain"]
+COPY ["src/WannaEat.Shared", "WannaEat.Shared"]
 COPY ["src/WannaEat.Infrastructure", "WannaEat.Infrastructure"]
+COPY ["src/WannaEat.FoodService.MMenu", "WannaEat.FoodService.MMenu"]
 COPY ["src/WannaEat.FoodService.MZR", "WannaEat.FoodService.MZR"]
 COPY ["src/WannaEat.Web", "WannaEat.Web"]
 COPY ["src/WannaEat.sln", "."]
