@@ -24,7 +24,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         setProducts([...products, product])
     }
     const [currentProductsPage, setCurrentProductsPage] = useState(1)
-    
+
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [dishesNotFoundMessage, setDishesNotFoundMessage] = useState('Здесь появится, то что можно приготовить');
     
@@ -35,41 +35,10 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     
     const defaultPageSize = 15
     
-    useEffect(() => {
-        ingredientsRepository.getProductsAsync(1, defaultPageSize).then(products => {
-            setProducts(products)
-        })
-    }, [])
-
     const resetTimeout = () => {
         window.clearTimeout(searchTimeout)
-    }
-    const loadNextProductsPage = () => {
-        if (productSearchName.length >= 3) {
-            ingredientsRepository.findWithName(productSearchName, currentProductsPage + 1, defaultPageSize).then(loaded => {
-                console.log(loaded)
-                setProducts([...products, ...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
-                setCurrentProductsPage(currentProductsPage + 1)
-            })
-        } else {
-            ingredientsRepository.getProductsAsync(currentProductsPage + 1, defaultPageSize).then(loaded => {
-                console.log(loaded)
-                setProducts([...products, ...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
-                setCurrentProductsPage(currentProductsPage + 1)
-                console.log('New page set')
-            })
-        }
-    }
-    
-    useEffect(() => {
-        resetTimeout();
+    };
 
-        const handle = window.setTimeout(() => {
-            searchProductsByName(productSearchName)
-        }, searchDelaySeconds * 1000);
-        setSearchTimeout(handle);
-    }, [productSearchName]);
-    
     const searchProductsByName = (name: string) => {
         if (name.length < 3) {
             if (name.length === 0)
@@ -84,38 +53,53 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
             setCurrentProductsPage(1)
         });
     }
-    
-    useEffect(() => {
-        setCalculateButtonEnabled(selectedProducts.length !== 0)
-    }, [selectedProducts])
-    
+
 
     const selectedProductOnChoose = (sp: Ingredient) => {
         moveToProducts(sp)
     }
-    
+
     const productOnChoose = (p: Ingredient) => {
         moveToSelected(p)
     }
-    
+
     const [calculateButtonEnabled, setCalculateButtonEnabled] = useState(true)
-    
+
     const onCalculateButtonClick = () => {
-        setCalculateButtonEnabled(false)
+        setCalculateButtonEnabled(false);
         foodService.findRelevantDishes(selectedProducts).then(d => {
-            setDishesNotFoundMessage(d.length === 0 
+            setDishesNotFoundMessage(d.length === 0
                 ? 'Ничего не нашлось('
                 : '');
             setRecipes(d);
             setCalculateButtonEnabled(true);
         })
     }
-    
+
     const redirectToRecipe = (r: Recipe) => {
-        console.log(r.originUrl)
+        console.log(r.originUrl);
         window.open(r.originUrl, '_blank');
     }
-    
+
+    useEffect(() => {
+        setCalculateButtonEnabled(selectedProducts.length !== 0)
+    }, [selectedProducts]);
+
+    useEffect(() => {
+        resetTimeout();
+
+        const handle = window.setTimeout(() => {
+            searchProductsByName(productSearchName)
+        }, searchDelaySeconds * 1000);
+        setSearchTimeout(handle);
+    }, [productSearchName]);
+
+    useEffect(() => {
+        ingredientsRepository.getProductsAsync(1, defaultPageSize).then(products => {
+            setProducts(products)
+        })
+    }, [])
+
     return (
         <div className={'h-100'}>
             <div className={'double-column h-100'}>

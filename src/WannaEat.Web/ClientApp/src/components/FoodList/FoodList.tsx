@@ -17,15 +17,15 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose}: F
     return (
         <div className={'h-100'}>
             <div className={'bg-light d-grid p-2 rounded-1 h-100'}>
-                <div className={'scroll-list'}>
+                <div className={'food-scroll'}>
                     <ul className={'list-group rounded-1'} style={{
-                        maxHeight: '100px'
+                        height: 0
                     }}>
                         { 
                             foods.length > 0 
                                 ? 
                                 foods.map(f => (
-                                    <li key={f.name} onClick={e => onChooseInner(f)} value={f.name} 
+                                    <li key={f.name} onClick={_ => onChooseInner(f)} value={f.name}
                                         className={'list-group-item cursor-pointer'}>
                                         {f.name}
                                     </li>))
