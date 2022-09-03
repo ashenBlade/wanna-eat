@@ -20,7 +20,8 @@ public class MMenuRecipeService: IRecipeService
         _ingredientSearcher = ingredientSearcher;
         _logger = logger;
     }
-    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients, 
+                                                                    CancellationToken cancellationToken)
     {
         var html = await DownloadRecipesPageForIngredients(ingredients, cancellationToken);
         _logger.LogInformation("Recipe HTML page was successfully downloaded. Starting parsing");
