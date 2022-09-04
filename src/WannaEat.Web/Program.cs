@@ -3,6 +3,7 @@ using WannaEat.Domain.Interfaces;
 using WannaEat.FoodService.MMenu;
 using WannaEat.FoodService.MZR;
 using WannaEat.Infrastructure.Persistence;
+using WannaEat.Infrastructure.RecipeService;
 using WannaEat.Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,10 +19,7 @@ if (builder.Configuration.IsHeroku())
 builder.Services
        .AddControllers()
        .AddNewtonsoftJson();
-builder.Services.AddHttpClient();
-builder.Services.AddScoped<IRecipeService, MZRRecipeService>();
-builder.Services.AddScoped<IIngredientSearcher, ParallelIngredientSearcher>();
-builder.Services.AddScoped<IRecipeService, MMenuRecipeService>();
+builder.Services.AddRecipeServices();
 builder.Services.AddDbContext<WannaEatDbContext>(db =>
 {
     string GetConnectionString()

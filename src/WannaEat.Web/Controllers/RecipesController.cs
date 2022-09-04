@@ -6,6 +6,7 @@ using WannaEat.Domain.Interfaces;
 using WannaEat.Infrastructure.Persistence;
 using WannaEat.Web.Dto.Recipe;
 using WannaEat.Web.Infrastructure.Attributes;
+using WannaEat.Web.Infrastructure.Interfaces;
 
 
 namespace WannaEat.Web.Controllers;
@@ -14,12 +15,12 @@ namespace WannaEat.Web.Controllers;
 [Route("api/v1/recipes")]
 public class RecipesController: ControllerBase
 {
-    private readonly IEnumerable<IRecipeService> _recipeServices;
+    private readonly IAggregatedRecipeService _recipeService;
     private readonly WannaEatDbContext _context;
 
-    public RecipesController(IEnumerable<IRecipeService> recipeServices, WannaEatDbContext context)
+    public RecipesController(IAggregatedRecipeService recipeService, WannaEatDbContext context)
     {
-        _recipeServices = recipeServices;
+        _recipeService = recipeService;
         _context = context;
     }
 
@@ -33,11 +34,9 @@ public class RecipesController: ControllerBase
         int size)
     {
         var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(100));
-        var products = await FindAllProductsByIdsAsync(productIds, page, size);
-        var recipes = await Task.WhenAll(_recipeServices.Select(service => service.GetRecipesForIngredients(products, tokenSource.Token)))
-                                .ContinueWith(task => task.Result.SelectMany(r => r), tokenSource.Token);
-        var l = recipes.ToList();
-        return Ok(l.Select(r => new GetRecipeDto
+        var ingredients = await FindAllProductsByIdsAsync(productIds, page, size);
+        var recipes = await _recipeService.GetRecipesForIngredients(ingredients, tokenSource.Token);
+        return Ok(recipes.Select(r => new GetRecipeDto
                                       {
                                           Name = r.Name,
                                           ImageUrl = r.ImageUrl?.ToString(),
