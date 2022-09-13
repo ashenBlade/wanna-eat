@@ -23,7 +23,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         setSelectedProducts([...selectedProducts.filter(sp => sp.id !== product.id)])
         setProducts([...products, product])
     }
-    const [currentProductsPage, setCurrentProductsPage] = useState(1)
 
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [dishesNotFoundMessage, setDishesNotFoundMessage] = useState('Здесь появится, то что можно приготовить');
@@ -44,13 +43,11 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
             if (name.length === 0)
                 ingredientsRepository.getProductsAsync(1, defaultPageSize).then(loaded => {
                     setProducts([...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))]);
-                    setCurrentProductsPage(1)
                 })
             return;
         }
         ingredientsRepository.findWithName(name, 1, defaultPageSize).then(loaded => {
             setProducts([...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))])
-            setCurrentProductsPage(1)
         });
     }
 
@@ -92,13 +89,14 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
             searchProductsByName(productSearchName)
         }, searchDelaySeconds * 1000);
         setSearchTimeout(handle);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [productSearchName]);
 
     useEffect(() => {
         ingredientsRepository.getProductsAsync(1, defaultPageSize).then(products => {
             setProducts(products)
         })
-    }, [])
+    }, [ingredientsRepository])
 
     return (
         <div className={'h-100'}>
