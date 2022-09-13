@@ -1,12 +1,12 @@
 import NavBar from "./components/NavBar/NavBar";
 import Products from "./components/Products/Products";
-import {IngredientsRepository} from "./services/ingredientsRepository";
-import {FoodService} from "./services/foodService";
 import './custom.css';
+import {StubIngredientsRepository} from "./services/stubIngredientsRepository";
+import {StubFoodService} from "./services/stubFoodService";
 
 const App = () => {
-    const productsRepo = new IngredientsRepository()
-    const foodService = new FoodService()
+    const productsRepo = new StubIngredientsRepository()
+    const foodService = new StubFoodService()
     return (
         <div className={'page-layout'}>
             <div>

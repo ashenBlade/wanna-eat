@@ -1,10 +1,10 @@
 import React, {FC, useEffect, useState} from 'react';
 import {Ingredient} from "../../entities/ingredient";
 import {Recipe} from "../../entities/recipe";
-import {IIngredientsRepository} from "../../services/ingredientsRepository";
-import {IFoodService} from "../../services/foodService";
 import './Products.tsx.css';
 import FoodList from "../FoodList/FoodList";
+import {IFoodService} from "../../interfaces/iFoodService";
+import {IIngredientsRepository} from "../../interfaces/iIngredientRepository";
 
 interface ProductsPageProps {
     ingredientsRepository: IIngredientsRepository

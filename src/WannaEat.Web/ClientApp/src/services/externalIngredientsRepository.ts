@@ -1,12 +1,7 @@
 import {Ingredient} from "../entities/ingredient";
+import {IIngredientsRepository} from "../interfaces/iIngredientRepository";
 
-export interface IIngredientsRepository {
-    getProductsAsync(pageNumber: number, pageSize: number): Promise<Ingredient[]>
-    getProductById(id: number): Promise<Ingredient | null>
-    findWithName(name: string, pageNumber: number, max: number): Promise<Ingredient[]>
-}
-
-export class IngredientsRepository implements IIngredientsRepository {
+export class ExternalIngredientsRepository implements IIngredientsRepository {
     getProductById(id: number): Promise<Ingredient | null> {
         return fetch(`api/v1/ingredients/${id}`).then(res => res.json());
     }
