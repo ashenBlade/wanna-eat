@@ -112,7 +112,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                 </div>
                 <div/>
                 <div>
-                    <button className={'btn btn-success'} onClick={onCalculateButtonClick} disabled={!calculateButtonEnabled}>Подсчитать</button>
+                    <button className={'btn btn-success w-100'} onClick={onCalculateButtonClick} disabled={!calculateButtonEnabled}>Подсчитать</button>
                 </div>
                 <div title={'Что можно выбрать'} className={'grounded p-1 pb-2'}>
                     <FoodList onChoose={productOnChoose} foods={products}/>
