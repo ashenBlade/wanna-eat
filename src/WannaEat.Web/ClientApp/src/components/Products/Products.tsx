@@ -102,7 +102,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
 
     return (
         <div className={'h-100'}>
-            <div className={'double-column h-100'}>
+            <div className={'triple-column h-100'}>
                 <div className={'d-flex align-items-end'}>
                     <div className={'p-1 w-100 d-flex justify-content-between align-items-center'}>
                         <input className={'form-control'} type={'text'}
