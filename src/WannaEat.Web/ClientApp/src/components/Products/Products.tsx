@@ -134,8 +134,9 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                 </div>
                 <hr className={'d-block m-0 d-md-none'}/>
                 <div title={'Что у вас имеется'} className={'grounded p-1 pb-2'}>
-                    <FoodList onChoose={selectedProductOnChoose} foods={selectedProducts}
-                              emptyListPlaceholder={'Выберите продукты из списка слева'}/>
+                    <FoodList onChoose={selectedProductOnChoose}
+                              foods={selectedProducts}
+                              emptyListPlaceholder={'Здесь будут выбранные продукты'}/>
                 </div>
 
                 <div className={`d-md-block recipes`}>
