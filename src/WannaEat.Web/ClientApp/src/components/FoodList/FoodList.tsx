@@ -26,7 +26,7 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose}: F
                                 ? 
                                 foods.map(f => (
                                     <li key={f.name} onClick={_ => onChooseInner(f)} value={f.name}
-                                        className={'list-group-item cursor-pointer'}>
+                                        className={'list-group-item p-1 p-md-2 cursor-pointer'}>
                                         {f.name}
                                     </li>))
                                 :
