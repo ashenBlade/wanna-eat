@@ -98,7 +98,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                 : '');
             showRecipes(recipes);
         } catch (e) {
-            // Показать сообщение об ошибке
+            setRecipesListMessage('Во время запроса произошла ошибка')
         } finally {
             setCalculateButtonEnabled(true);
         }
