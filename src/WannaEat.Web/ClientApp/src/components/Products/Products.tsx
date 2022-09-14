@@ -3,13 +3,7 @@ import {Ingredient} from "../../entities/ingredient";
 import {Recipe} from "../../entities/recipe";
 import './Products.tsx.css';
 import FoodList from "../FoodList/FoodList";
-import {IFoodService} from "../../interfaces/iFoodService";
-import {IIngredientsRepository} from "../../interfaces/iIngredientRepository";
-
-interface ProductsPageProps {
-    ingredientsRepository: IIngredientsRepository
-    foodService: IFoodService
-}
+import {ProductsPageProps} from "./ProductsPageProps";
 
 const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) => {
     const [products, setProducts] = useState<Ingredient[]>([]);
@@ -59,6 +53,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
 
     const productOnChoose = (p: Ingredient) => {
         moveToSelected(p);
+        setProductSearchName('');
     }
 
     const [calculateButtonEnabled, setCalculateButtonEnabled] = useState(true)
@@ -111,6 +106,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
 
     const onBackButtonClick = () => {
         setRecipesVisible(false);
+        setProductSearchName('');
     }
 
     return (
@@ -118,8 +114,10 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
             <div className={`triple-column h-100 ${recipesVisible ? 'show-results' : ''}`}>
                 <div className={'align-items-end p-1'}>
                     <div className={'p-1 w-100 d-flex justify-content-between align-items-center'}>
-                        <input className={'form-control'} type={'text'}
+                        <input className={'form-control'}
+                               type={'text'}
                                placeholder={'Что искать?'}
+                               value={productSearchName}
                                onChange={e => setProductSearchName(e.currentTarget.value)}/>
                     </div>
                 </div>
