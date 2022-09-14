@@ -3,7 +3,7 @@ import './FoodList.tsx.css'
 import {Food} from "../../entities/food";
 import {FoodListProps} from "./FoodListProps";
 
-const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, listElementActionSign}: FoodListProps<TFood>) => {
+const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, listElementActionSign, listElementSignHint}: FoodListProps<TFood>) => {
     const placeholder = emptyListPlaceholder ?? '';
     
     const onChooseInner = (f: TFood) => onChoose ? onChoose(f) : null;
@@ -23,7 +23,8 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, li
                 <span>
                     {f.name}
                 </span>
-                <span onClick={_ => onChooseInner(f)}>
+                <span onClick={_ => onChooseInner(f)}
+                      title={listElementSignHint}>
                     {listElementActionSign}
                 </span>
             </li>);

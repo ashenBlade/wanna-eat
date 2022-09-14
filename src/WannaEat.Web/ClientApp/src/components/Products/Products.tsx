@@ -135,6 +135,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                     <FoodList onChoose={selectedProductOnChoose}
                               foods={selectedProducts}
                               listElementActionSign={'✕'}
+                              listElementSignHint={'У меня этого нет'}
                               emptyListPlaceholder={'Здесь будут выбранные продукты'}/>
                 </div>
 
