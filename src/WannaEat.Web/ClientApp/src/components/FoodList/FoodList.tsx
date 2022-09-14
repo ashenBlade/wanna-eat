@@ -16,24 +16,18 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose}: F
     
     return (
         <div className={'h-100'}>
-            <div className={'bg-light d-grid p-2 rounded-1 h-100'}>
-                <div className={'food-scroll'}>
-                    <ul className={'list-group rounded-1'} style={{
-                        height: 0
-                    }}>
-                        { 
-                            foods.length > 0 
-                                ? 
-                                foods.map(f => (
-                                    <li key={f.name} onClick={_ => onChooseInner(f)} value={f.name}
-                                        className={'list-group-item p-1 p-md-2 cursor-pointer'}>
-                                        {f.name}
-                                    </li>))
-                                :
-                                    <p className={'text-center text-black'}>{placeholder}</p>
-                        }
-                    </ul>
-                </div>
+            <div className={'food-scroll bg-light p-2 rounded-1 h-100'}>
+                <ul className={'list-group rounded-1 h-0'}>
+                    {
+                        foods.length > 0
+                            ? foods.map(f => (
+                                <li key={f.name} onClick={_ => onChooseInner(f)} value={f.name}
+                                    className={'list-group-item p-1 p-md-2 cursor-pointer'}>
+                                    {f.name}
+                                </li>))
+                            : <p className={'text-center text-black'}>{placeholder}</p>
+                    }
+                </ul>
             </div>
         </div>
     );

@@ -13,3 +13,7 @@
 .food-scroll::-webkit-scrollbar {
     display: none;
 }
+
+.h-0 {
+    height: 0;
+}

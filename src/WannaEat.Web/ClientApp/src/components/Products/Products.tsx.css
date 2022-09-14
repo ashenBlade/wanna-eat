@@ -4,12 +4,43 @@
     grid-template-rows: min-content 1fr;
 }
 
-@media (max-width: 700px) {
+
+.recipes {
+    display: grid;
+    grid-template-rows: 0 1fr;
+    grid-template-columns: 1fr;
+}
+
+@media (max-width: 768px) {
     .triple-column {
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: repeat(3, min-content) repeat(3, 1fr);
+        grid-template-rows: repeat(3, min-content) 1fr min-content 1fr;
     }
+
+    .recipes {
+        display: grid;
+        grid-template-rows: min-content 1fr;
+        grid-template-columns: 1fr;
+    }
+
+    .triple-column.show-results {
+        display: block;
+    }
+
+    .triple-column > *:last-child {
+        display: none;
+    }
+
+    .triple-column.show-results > * {
+        display: none!important;
+    }
+
+    .triple-column.show-results > *:last-child {
+        display: grid!important;
+        height: 100%;
+    }
+
 
 }
 

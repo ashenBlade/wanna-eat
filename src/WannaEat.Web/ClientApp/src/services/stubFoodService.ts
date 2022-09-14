@@ -48,7 +48,7 @@ export class StubFoodService implements IFoodService {
     constructor(recipes?: Recipe[]) {
         this.recipes = recipes || StubFoodService.recipes;
     }
-    findRelevantDishes(products: Ingredient[]): Promise<Recipe[]> {
+    findRelevantRecipes(products: Ingredient[]): Promise<Recipe[]> {
         return Promise.resolve(this.recipes);
     }
 }

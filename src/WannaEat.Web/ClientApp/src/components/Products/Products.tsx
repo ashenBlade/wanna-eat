@@ -18,22 +18,23 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         setProducts([...products.filter(p => p.id !== product.id)])
         setSelectedProducts([...selectedProducts, product])
     }
-    
+
     const moveToProducts = (product: Ingredient) => {
         setSelectedProducts([...selectedProducts.filter(sp => sp.id !== product.id)])
         setProducts([...products, product])
     }
 
     const [recipes, setRecipes] = useState<Recipe[]>([]);
-    const [dishesNotFoundMessage, setDishesNotFoundMessage] = useState('Здесь появится, то что можно приготовить');
-    
+    const [recipesListMessage, setRecipesListMessage] = useState('Здесь появится, то что можно приготовить');
+    const [recipesVisible, setRecipesVisible] = useState(false);
+
     const [searchTimeout, setSearchTimeout] = useState(0);
     const [productSearchName, setProductSearchName] = useState('');
-    
+
     const searchDelaySeconds = 0.2;
-    
+
     const defaultPageSize = 15
-    
+
     const resetTimeout = () => {
         window.clearTimeout(searchTimeout)
     };
@@ -53,25 +54,14 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
 
 
     const selectedProductOnChoose = (sp: Ingredient) => {
-        moveToProducts(sp)
+        moveToProducts(sp);
     }
 
     const productOnChoose = (p: Ingredient) => {
-        moveToSelected(p)
+        moveToSelected(p);
     }
 
     const [calculateButtonEnabled, setCalculateButtonEnabled] = useState(true)
-
-    const onCalculateButtonClick = () => {
-        setCalculateButtonEnabled(false);
-        foodService.findRelevantDishes(selectedProducts).then(d => {
-            setDishesNotFoundMessage(d.length === 0
-                ? 'Ничего не нашлось('
-                : '');
-            setRecipes(d);
-            setCalculateButtonEnabled(true);
-        })
-    }
 
     const redirectToRecipe = (r: Recipe) => {
         console.log(r.originUrl);
@@ -86,9 +76,10 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         resetTimeout();
 
         const handle = window.setTimeout(() => {
-            searchProductsByName(productSearchName)
+            searchProductsByName(productSearchName);
         }, searchDelaySeconds * 1000);
         setSearchTimeout(handle);
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [productSearchName]);
 
@@ -98,10 +89,34 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         })
     }, [ingredientsRepository])
 
+    const onCalculateButtonClick = async () => {
+        setCalculateButtonEnabled(false);
+        try {
+            const recipes = await foodService.findRelevantRecipes(selectedProducts);
+            setRecipesListMessage(recipes.length === 0
+                ? 'Ничего не нашлось('
+                : '');
+            showRecipes(recipes);
+        } catch (e) {
+            // Показать сообщение об ошибке
+        } finally {
+            setCalculateButtonEnabled(true);
+        }
+    }
+
+    const showRecipes = (recipes: Recipe[]) => {
+        setRecipes(recipes);
+        setRecipesVisible(true);
+    }
+
+    const onBackButtonClick = () => {
+        setRecipesVisible(false);
+    }
+
     return (
         <div className={'h-100'}>
-            <div className={'triple-column h-100'}>
-                <div className={'d-flex align-items-end'}>
+            <div className={`triple-column h-100 ${recipesVisible ? 'show-results' : ''}`}>
+                <div className={'align-items-end p-1'}>
                     <div className={'p-1 w-100 d-flex justify-content-between align-items-center'}>
                         <input className={'form-control'} type={'text'}
                                placeholder={'Что искать?'}
@@ -109,18 +124,31 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                     </div>
                 </div>
                 <div/>
-                <div>
-                    <button className={'btn btn-success w-100'} onClick={onCalculateButtonClick} disabled={!calculateButtonEnabled}>Подсчитать</button>
+                <div className={'p-1'}>
+                    <button className={'btn btn-success w-100'} onClick={onCalculateButtonClick}
+                            disabled={!calculateButtonEnabled}>Подсчитать
+                    </button>
                 </div>
                 <div title={'Что можно выбрать'} className={'grounded p-1 pb-2'}>
                     <FoodList onChoose={productOnChoose} foods={products}/>
                 </div>
+                <hr className={'d-block m-0 d-md-none'}/>
                 <div title={'Что у вас имеется'} className={'grounded p-1 pb-2'}>
-                    <FoodList onChoose={selectedProductOnChoose} foods={selectedProducts} emptyListPlaceholder={'Выберите продукты из списка слева'}/>
+                    <FoodList onChoose={selectedProductOnChoose} foods={selectedProducts}
+                              emptyListPlaceholder={'Выберите продукты из списка слева'}/>
                 </div>
-                <div title={'Что можно приготовить'} className={'grounded p-1 pb-2'}>
-                    <FoodList foods={recipes} onChoose={redirectToRecipe} emptyListPlaceholder={dishesNotFoundMessage}/>
+
+                <div className={`d-md-block recipes`}>
+                    <div className={'d-block d-md-none'}>
+                        <button className={'btn'} onClick={onBackButtonClick}>Назад</button>
+                    </div>
+                    <div title={'Что можно приготовить'} className={'grounded p-1 d-flex h-100 pb-2'}>
+                        <FoodList foods={recipes}
+                                  onChoose={redirectToRecipe}
+                                  emptyListPlaceholder={recipesListMessage}/>
+                    </div>
                 </div>
+
             </div>
         </div>
     );
