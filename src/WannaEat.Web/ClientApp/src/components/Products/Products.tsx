@@ -134,8 +134,10 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                 <div title={'Что у вас имеется'} className={'grounded p-1 pb-2'}>
                     <FoodList onChoose={selectedProductOnChoose}
                               foods={selectedProducts}
-                              listElementActionSign={'✕'}
-                              listElementSignHint={'У меня этого нет'}
+                              additionalAction={{
+                                  hint: 'У меня этого нет',
+                                  sign: '✕'
+                              }}
                               emptyListPlaceholder={'Здесь будут выбранные продукты'}/>
                 </div>
 

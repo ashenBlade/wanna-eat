@@ -5,6 +5,8 @@ export interface FoodListProps<TFood extends Food> {
     onChoose?: ((product: TFood) => void),
     emptyListPlaceholder?: string,
     onScrollToEnd?: () => (void)
-    listElementActionSign?: string
-    listElementSignHint?: string
+    additionalAction?: {
+        sign: string
+        hint: string
+    }
 }

@@ -3,12 +3,12 @@ import './FoodList.tsx.css'
 import {Food} from "../../entities/food";
 import {FoodListProps} from "./FoodListProps";
 
-const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, listElementActionSign, listElementSignHint}: FoodListProps<TFood>) => {
+const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, additionalAction}: FoodListProps<TFood>) => {
     const placeholder = emptyListPlaceholder ?? '';
-    
+
     const onChooseInner = (f: TFood) => onChoose ? onChoose(f) : null;
 
-    const createFoodListElement = (f: TFood) => listElementActionSign === undefined
+    const createFoodListElement = (f: TFood) => additionalAction === undefined
         ? (<li key={f.name}
                onClick={_ => onChooseInner(f)}
                value={f.name}
@@ -24,8 +24,8 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, li
                     {f.name}
                 </span>
                 <span onClick={_ => onChooseInner(f)}
-                      title={listElementSignHint}>
-                    {listElementActionSign}
+                      title={additionalAction.hint}>
+                    {additionalAction.sign}
                 </span>
             </li>);
 
