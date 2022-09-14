@@ -27,6 +27,9 @@ code {
   border-color: #1861ac;
 }
 
-.cursor-pointer {
+.food-list-item {
   cursor: pointer !important;
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  grid-template-rows: 1fr;
 }

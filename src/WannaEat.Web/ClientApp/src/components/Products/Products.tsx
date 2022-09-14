@@ -134,12 +134,16 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                 <div title={'Что у вас имеется'} className={'grounded p-1 pb-2'}>
                     <FoodList onChoose={selectedProductOnChoose}
                               foods={selectedProducts}
+                              listElementActionSign={'✕'}
                               emptyListPlaceholder={'Здесь будут выбранные продукты'}/>
                 </div>
 
                 <div className={`d-md-block recipes`}>
                     <div className={'d-block d-md-none'}>
-                        <button className={'btn'} onClick={onBackButtonClick}>Назад</button>
+                        <button className={'btn'}
+                                onClick={onBackButtonClick}>
+                            ❮ Назад
+                        </button>
                     </div>
                     <div title={'Что можно приготовить'} className={'grounded p-1 d-flex h-100 pb-2'}>
                         <FoodList foods={recipes}
