@@ -1,9 +1,7 @@
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using WannaEat.Domain.Entities;
 using WannaEat.Domain.Interfaces;
-using WannaEat.Web.Infrastructure.Interfaces;
 
-namespace WannaEat.Infrastructure.RecipeService;
+namespace WannaEat.Application;
 
 public class AggregatedRecipeProvider: IAggregatedRecipeProvider
 {

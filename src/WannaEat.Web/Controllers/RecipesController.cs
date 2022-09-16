@@ -1,12 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WannaEat.Application;
 using WannaEat.Domain.Entities;
-using WannaEat.Domain.Interfaces;
 using WannaEat.Infrastructure.Persistence;
 using WannaEat.Web.Dto.Recipe;
 using WannaEat.Web.Infrastructure.Attributes;
-using WannaEat.Web.Infrastructure.Interfaces;
 
 
 namespace WannaEat.Web.Controllers;

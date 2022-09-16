@@ -1,8 +1,7 @@
+using WannaEat.Application;
 using WannaEat.Domain.Interfaces;
 using WannaEat.FoodService.MMenu;
 using WannaEat.FoodService.MZR;
-using WannaEat.Infrastructure.RecipeService;
-using WannaEat.Web.Infrastructure.Interfaces;
 
 namespace WannaEat.Web;
 
