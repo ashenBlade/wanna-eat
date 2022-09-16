@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WannaEat.FoodService.MMenu;
 using WannaEat.Infrastructure.Persistence;
 using WannaEat.Web.Dto.Product;
 using WannaEat.Web.Infrastructure.Attributes;
@@ -13,11 +14,13 @@ public class IngredientsController: ControllerBase
 {
     private readonly WannaEatDbContext _context;
     private readonly ILogger<IngredientsController> _logger;
+    private readonly IIngredientSearcher _searcher;
 
-    public IngredientsController(WannaEatDbContext context, ILogger<IngredientsController> logger)
+    public IngredientsController(WannaEatDbContext context, ILogger<IngredientsController> logger, IIngredientSearcher searcher)
     {
         _context = context;
         _logger = logger;
+        _searcher = searcher;
     }
 
     [HttpGet("")]
