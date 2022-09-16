@@ -12,7 +12,7 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, li
         ? (<li key={f.name}
                onClick={_ => onChooseInner(f)}
                value={f.name}
-               className={'list-group-item p-1 p-md-2 food-list-item'}>
+               className={'list-group-item p-1 p-md-2 cursor-pointer food-list-item'}>
             <span>
                 {f.name}
             </span>
@@ -24,7 +24,8 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, li
                     {f.name}
                 </span>
                 <span onClick={_ => onChooseInner(f)}
-                      title={listElementSignHint}>
+                      title={listElementSignHint}
+                      className={'cursor-pointer'}>
                     {listElementActionSign}
                 </span>
             </li>);
