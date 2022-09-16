@@ -9,12 +9,12 @@ using Recipe = WannaEat.Domain.Entities.Recipe;
 
 namespace WannaEat.FoodService.MZR;
 
-public class MZRRecipeService: IRecipeService
+public class MZRRecipeProvider: IRecipeProvider
 {
     private readonly HttpClient _client;
-    private readonly ILogger<MZRRecipeService> _logger;
+    private readonly ILogger<MZRRecipeProvider> _logger;
 
-    public MZRRecipeService(HttpClient client, ILogger<MZRRecipeService> logger)
+    public MZRRecipeProvider(HttpClient client, ILogger<MZRRecipeProvider> logger)
     {
         _client = client;
         _logger = logger;

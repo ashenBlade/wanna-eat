@@ -15,12 +15,12 @@ namespace WannaEat.Web.Controllers;
 [Route("api/v1/recipes")]
 public class RecipesController: ControllerBase
 {
-    private readonly IAggregatedRecipeService _recipeService;
+    private readonly IAggregatedRecipeProvider _recipeProvider;
     private readonly WannaEatDbContext _context;
 
-    public RecipesController(IAggregatedRecipeService recipeService, WannaEatDbContext context)
+    public RecipesController(IAggregatedRecipeProvider recipeProvider, WannaEatDbContext context)
     {
-        _recipeService = recipeService;
+        _recipeProvider = recipeProvider;
         _context = context;
     }
 
@@ -35,7 +35,7 @@ public class RecipesController: ControllerBase
     {
         var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(100));
         var ingredients = await FindAllProductsByIdsAsync(productIds, page, size);
-        var recipes = await _recipeService.GetRecipesForIngredients(ingredients, tokenSource.Token);
+        var recipes = await _recipeProvider.GetRecipesForIngredients(ingredients, tokenSource.Token);
         return Ok(recipes.Select(r => new GetRecipeDto
                                       {
                                           Name = r.Name,

@@ -73,10 +73,16 @@ public class IngredientsController: ControllerBase
         int size)
     {
         _logger.LogTrace(nameof(SearchByName) + "(name={Name},page={Page},size={Size}) requested", name, page, size);
+        // var ingredients = await _context.Ingredients
+        //                                 .Where(i => i.NameSearchVector.Matches(EF.Functions.PlainToTsQuery("russian", name)))
+        //                                 .OrderBy(i => i.NameSearchVector.Rank(EF.Functions.PlainToTsQuery("russian", name)))
+        //                                 .ThenBy(i => i.Name)
+        //                                 .Skip(( page - 1 ) * size)
+        //                                 .Take(size)
+        //                                 .ToListAsync();
         var ingredients = await _context.Ingredients
-                                        .Where(i => i.NameSearchVector.Matches(EF.Functions.PlainToTsQuery("russian", name)))
-                                        .OrderBy(i => i.NameSearchVector.Rank(EF.Functions.PlainToTsQuery("russian", name)))
-                                        .ThenBy(i => i.Name)
+                                        .Where(i => i.Name.ToLower().StartsWith(name.ToLower()))
+                                        .OrderBy(i => i.Name)
                                         .Skip(( page - 1 ) * size)
                                         .Take(size)
                                         .ToListAsync();

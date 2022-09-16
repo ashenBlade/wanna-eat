@@ -5,11 +5,11 @@ using WannaEat.Web.Infrastructure.Interfaces;
 
 namespace WannaEat.Infrastructure.RecipeService;
 
-public class AggregatedRecipeService: IAggregatedRecipeService
+public class AggregatedRecipeProvider: IAggregatedRecipeProvider
 {
-    private readonly IEnumerable<IRecipeService> _recipeServices;
+    private readonly IEnumerable<IRecipeProvider> _recipeServices;
 
-    public AggregatedRecipeService(IEnumerable<IRecipeService> recipeServices)
+    public AggregatedRecipeProvider(IEnumerable<IRecipeProvider> recipeServices)
     {
         _recipeServices = recipeServices;
     }

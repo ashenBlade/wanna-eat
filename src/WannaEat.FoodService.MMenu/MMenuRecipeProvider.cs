@@ -8,13 +8,13 @@ using Recipe = WannaEat.Domain.Entities.Recipe;
 
 namespace WannaEat.FoodService.MMenu;
 
-public class MMenuRecipeService: IRecipeService
+public class MMenuRecipeProvider: IRecipeProvider
 {
     private readonly HttpClient _client;
     private readonly IIngredientSearcher _ingredientSearcher;
-    private readonly ILogger<MMenuRecipeService> _logger;
+    private readonly ILogger<MMenuRecipeProvider> _logger;
 
-    public MMenuRecipeService(HttpClient client, IIngredientSearcher ingredientSearcher, ILogger<MMenuRecipeService> logger)
+    public MMenuRecipeProvider(HttpClient client, IIngredientSearcher ingredientSearcher, ILogger<MMenuRecipeProvider> logger)
     {
         _client = client;
         _ingredientSearcher = ingredientSearcher;

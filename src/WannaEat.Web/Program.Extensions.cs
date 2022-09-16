@@ -12,9 +12,9 @@ public static class ProgramExtensions
     {
         services.AddHttpClient();
         services.AddScoped<IIngredientSearcher, ParallelIngredientSearcher>();
-        services.AddScoped<IRecipeService, MZRRecipeService>();
-        services.AddScoped<IRecipeService, MMenuRecipeService>();
-        services.AddScoped<IAggregatedRecipeService, AggregatedRecipeService>();
+        services.AddScoped<IRecipeProvider, MZRRecipeProvider>();
+        services.AddScoped<IRecipeProvider, MMenuRecipeProvider>();
+        services.AddScoped<IAggregatedRecipeProvider, AggregatedRecipeProvider>();
         return services;
     }
 }
