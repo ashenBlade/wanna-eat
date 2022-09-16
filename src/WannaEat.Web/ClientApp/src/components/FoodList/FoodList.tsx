@@ -4,12 +4,12 @@ import {Food} from "../../entities/food";
 import {FoodListProps} from "./FoodListProps";
 import Loader from "../Loader/Loader";
 
-const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, listElementActionSign, listElementSignHint, isLoading}: FoodListProps<TFood>) => {
+const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, additionalAction, isLoading}: FoodListProps<TFood>) => {
     const placeholder = emptyListPlaceholder ?? '';
-
+    const {sign, hint} = additionalAction ?? {sign: undefined, hint: ''}
     const onChooseInner = (f: TFood) => onChoose ? onChoose(f) : null;
 
-    const createFoodListElement = (f: TFood) => listElementActionSign === undefined
+    const createFoodListElement = (f: TFood) => sign === undefined
         ? (<li key={f.name}
                onClick={_ => onChooseInner(f)}
                value={f.name}
@@ -25,9 +25,9 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, li
                     {f.name}
                 </span>
                 <span onClick={() => onChooseInner(f)}
-                      title={listElementSignHint}
+                      title={hint}
                       className={'cursor-pointer'}>
-                    {listElementActionSign}
+                    {sign}
                 </span>
             </li>);
 

@@ -36,7 +36,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         if (name.length < 3) {
             return;
         }
-        setProductsLoading(true);
+        setProductsLoading(false);
         if (name.length === 0) {
             ingredientsRepository.getProductsAsync(1, defaultPageSize).then(loaded => {
                 setProducts([...loaded.filter(p => !selectedProducts.some(sp => sp.id === p.id))]);
@@ -146,7 +146,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                     <FoodList onChoose={productOnChoose}
                               foods={products}
                               emptyListPlaceholder={'Здесь появятся найденные продукты'}
-                    isLoading={productsLoading}/>
+                              isLoading={productsLoading}/>
                 </div>
                 <hr className={'d-block m-0 d-md-none'}/>
                 <div title={'Что у вас имеется'} className={'grounded p-1 pb-2'}>
