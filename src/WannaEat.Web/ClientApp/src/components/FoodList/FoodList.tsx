@@ -2,17 +2,18 @@ import React from 'react';
 import './FoodList.tsx.css'
 import {Food} from "../../entities/food";
 import {FoodListProps} from "./FoodListProps";
+import Loader from "../Loader/Loader";
 
-const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, additionalAction}: FoodListProps<TFood>) => {
+const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, listElementActionSign, listElementSignHint, isLoading}: FoodListProps<TFood>) => {
     const placeholder = emptyListPlaceholder ?? '';
 
     const onChooseInner = (f: TFood) => onChoose ? onChoose(f) : null;
 
-    const createFoodListElement = (f: TFood) => additionalAction === undefined
+    const createFoodListElement = (f: TFood) => listElementActionSign === undefined
         ? (<li key={f.name}
                onClick={_ => onChooseInner(f)}
                value={f.name}
-               className={'list-group-item p-1 p-md-2 food-list-item'}>
+               className={'list-group-item p-1 p-md-2 cursor-pointer food-list-item'}>
             <span>
                 {f.name}
             </span>
@@ -23,9 +24,10 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, ad
                 <span>
                     {f.name}
                 </span>
-                <span onClick={_ => onChooseInner(f)}
-                      title={additionalAction.hint}>
-                    {additionalAction.sign}
+                <span onClick={() => onChooseInner(f)}
+                      title={listElementSignHint}
+                      className={'cursor-pointer'}>
+                    {listElementActionSign}
                 </span>
             </li>);
 
@@ -34,9 +36,13 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, ad
             <div className={'food-scroll bg-light p-2 rounded-1 h-100'}>
                 <ul className={'list-group rounded-1 h-0'}>
                     {
-                        foods.length > 0
-                            ? foods.map(f => createFoodListElement(f))
-                            : <p className={'text-center text-black'}>{placeholder}</p>
+                        isLoading
+                            ? <div className={'justify-content-center d-flex'}><Loader color={'gray'}/></div>
+                            : foods.length > 0
+                                ? foods.map(f => createFoodListElement(f))
+                                : (<p className={'text-center text-black'}>
+                                    {placeholder}
+                                </p>)
                     }
                 </ul>
             </div>
