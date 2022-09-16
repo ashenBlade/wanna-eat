@@ -7,4 +7,5 @@ export interface FoodListProps<TFood extends Food> {
     onScrollToEnd?: () => (void)
     listElementActionSign?: string
     listElementSignHint?: string
+    isLoading?: boolean
 }

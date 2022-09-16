@@ -2,10 +2,11 @@ import React from 'react';
 import './FoodList.tsx.css'
 import {Food} from "../../entities/food";
 import {FoodListProps} from "./FoodListProps";
+import Loader from "../Loader/Loader";
 
-const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, listElementActionSign, listElementSignHint}: FoodListProps<TFood>) => {
+const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, listElementActionSign, listElementSignHint, isLoading}: FoodListProps<TFood>) => {
     const placeholder = emptyListPlaceholder ?? '';
-    
+
     const onChooseInner = (f: TFood) => onChoose ? onChoose(f) : null;
 
     const createFoodListElement = (f: TFood) => listElementActionSign === undefined
@@ -23,7 +24,7 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, li
                 <span>
                     {f.name}
                 </span>
-                <span onClick={_ => onChooseInner(f)}
+                <span onClick={() => onChooseInner(f)}
                       title={listElementSignHint}
                       className={'cursor-pointer'}>
                     {listElementActionSign}
@@ -35,9 +36,13 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, li
             <div className={'food-scroll bg-light p-2 rounded-1 h-100'}>
                 <ul className={'list-group rounded-1 h-0'}>
                     {
-                        foods.length > 0
-                            ? foods.map(f => createFoodListElement(f))
-                            : <p className={'text-center text-black'}>{placeholder}</p>
+                        isLoading
+                            ? <div className={'justify-content-center d-flex'}><Loader color={'gray'}/></div>
+                            : foods.length > 0
+                                ? foods.map(f => createFoodListElement(f))
+                                : (<p className={'text-center text-black'}>
+                                    {placeholder}
+                                </p>)
                     }
                 </ul>
             </div>
