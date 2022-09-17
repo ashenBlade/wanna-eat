@@ -1,10 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WannaEat.Application;
-using WannaEat.Domain.Entities;
 using WannaEat.Domain.Services;
-using WannaEat.Infrastructure.Persistence;
 using WannaEat.Web.Dto.Recipe;
 using WannaEat.Web.Infrastructure.Attributes;
 
@@ -28,14 +25,12 @@ public class RecipesController: ControllerBase
     public async Task<ActionResult<IEnumerable<GetRecipeDto>>> GetSatisfiedRecipes(
         [FromQuery(Name = "contain")] [Required]
         int[] productIds,
-        [FromQuery(Name = "page")] [Required] [Positive]
-        int page,
-        [FromQuery(Name = "size")] [Required] [Range(1, 100)]
-        int size,
-        CancellationToken token)
+        [FromQuery(Name = "max")] [Positive]
+        int max = 20,
+        CancellationToken token = default)
     {
         var ingredients = await _ingredients.FindAllByIdAsync(productIds, token);
-        var recipes = await _recipeProvider.GetRecipesForIngredients(ingredients, 40, token);
+        var recipes = await _recipeProvider.GetRecipesForIngredients(ingredients, max, token);
         return Ok(recipes.Select(r => new GetRecipeDto
                                       {
                                           Name = r.Name,

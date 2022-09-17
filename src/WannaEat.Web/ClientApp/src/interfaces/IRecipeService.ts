@@ -1,6 +1,6 @@
 import {Ingredient} from "../entities/ingredient";
 import {Recipe} from "../entities/recipe";
 
-export interface IFoodService {
+export interface IRecipeService {
     findRelevantRecipes(products: Ingredient[]): Promise<Recipe[]>
 }

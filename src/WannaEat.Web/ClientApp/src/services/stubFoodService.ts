@@ -1,8 +1,8 @@
-import {IFoodService} from "../interfaces/iFoodService";
+import {IRecipeService} from "../interfaces/IRecipeService";
 import {Ingredient} from "../entities/ingredient";
 import {Recipe} from "../entities/recipe";
 
-export class StubFoodService implements IFoodService {
+export class StubFoodService implements IRecipeService {
     static recipes: Recipe[] = [
         {"id": 775, "name": "Киви", originUrl: ''},
         {"id": 379, "name": "Ёкан", originUrl: ''},

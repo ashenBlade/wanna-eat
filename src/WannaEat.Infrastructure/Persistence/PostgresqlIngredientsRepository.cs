@@ -30,8 +30,11 @@ public class PostgresqlIngredientsRepository: IIngredientRepository
             throw new ArgumentNullException(nameof(name));
         }
 
+        name = name.ToLower();
         var dbIngredients =  await _context.Ingredients
-                                           .Where(i => i.Name.ToLower().StartsWith(name.ToLower()))
+                                           .Where(i => i.Name
+                                                        .ToLower()
+                                                        .Contains(name))
                                            .OrderBy(i => i.Name)
                                            .Skip(( page - 1 ) * size)
                                            .Take(size)
