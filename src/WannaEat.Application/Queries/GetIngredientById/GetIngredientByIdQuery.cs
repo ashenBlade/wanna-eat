@@ -5,5 +5,10 @@ namespace WannaEat.Application.Queries.GetIngredientById;
 
 public class GetIngredientByIdQuery: IRequest<Ingredient?>
 {
-    public int Id { get; set; }
+    public GetIngredientByIdQuery(int id)
+    {
+        Id = id;
+    }
+
+    public int Id { get; }
 }

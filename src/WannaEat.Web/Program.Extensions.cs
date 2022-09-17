@@ -1,4 +1,6 @@
+using MediatR;
 using WannaEat.Application;
+using WannaEat.Application.Queries.GetIngredientById;
 using WannaEat.Domain.Services;
 using WannaEat.FoodService.MMenu;
 using WannaEat.FoodService.MZR;
@@ -14,6 +16,12 @@ public static class ProgramExtensions
         services.AddScoped<IRecipeProvider, MZRRecipeProvider>();
         services.AddScoped<IRecipeProvider, MMenuRecipeProvider>();
         services.AddScoped<IAggregatedRecipeProvider, AggregatedRecipeProvider>();
+        return services;
+    }
+
+    public static IServiceCollection AddCQRS(this IServiceCollection services)
+    {
+        services.AddMediatR(typeof(GetIngredientByIdQuery).Assembly);
         return services;
     }
 }
