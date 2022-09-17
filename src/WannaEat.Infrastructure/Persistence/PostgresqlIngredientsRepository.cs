@@ -82,7 +82,7 @@ public class PostgresqlIngredientsRepository: IIngredientRepository
         }
         
         var dbIngredients = await _context.Ingredients
-                                          .OrderBy(i => i.Id)
+                                          .OrderBy(i => i.Name)
                                           .Skip(( page - 1 ) * size)
                                           .Take(size)
                                           .ToListAsync(token);
