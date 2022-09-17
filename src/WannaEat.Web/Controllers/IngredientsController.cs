@@ -1,8 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WannaEat.FoodService.MMenu;
-using WannaEat.Infrastructure.Persistence;
+using WannaEat.Domain.Services;
 using WannaEat.Web.Dto.Product;
 using WannaEat.Web.Infrastructure.Attributes;
 
@@ -12,15 +10,13 @@ namespace WannaEat.Web.Controllers;
 [Route("api/v1/ingredients")]
 public class IngredientsController: ControllerBase
 {
-    private readonly WannaEatDbContext _context;
+    private readonly IIngredientRepository _ingredients;
     private readonly ILogger<IngredientsController> _logger;
-    private readonly IIngredientSearcher _searcher;
 
-    public IngredientsController(WannaEatDbContext context, ILogger<IngredientsController> logger, IIngredientSearcher searcher)
+    public IngredientsController(IIngredientRepository ingredients, ILogger<IngredientsController> logger)
     {
-        _context = context;
+        _ingredients = ingredients;
         _logger = logger;
-        _searcher = searcher;
     }
 
     [HttpGet("")]
@@ -32,14 +28,11 @@ public class IngredientsController: ControllerBase
         [FromQuery(Name = "size")]
         [Range(1, 100)]
         [Required]
-        int size)
+        int size,
+        CancellationToken token)
     {
         _logger.LogTrace(nameof(GetIngredientsPaged) + "(page={Page}, size={Size}) requested", page, size);
-        var ingredientsPaged = await _context.Ingredients
-                                             .OrderBy(i => i.Id)
-                                             .Skip(( page - 1 ) * size)
-                                             .Take(size)
-                                             .ToListAsync();
+        var ingredientsPaged = await _ingredients.GetIngredientsPaged(page, size, token);
         return Ok(ingredientsPaged);
     }
 
@@ -47,11 +40,11 @@ public class IngredientsController: ControllerBase
     public async Task<ActionResult<GetIngredientDto?>> GetIngredientById(
         [FromRoute(Name = "id")] 
         [Required]
-        int id)
+        int id,
+        CancellationToken token)
     {
         _logger.LogTrace(nameof(GetIngredientById) + "(id={Id}) requested", id);
-        var ingredient = await _context.Ingredients
-                                       .FindAsync(id);
+        var ingredient = await _ingredients.FindByIdAsync(id, token);
         return ingredient is null
                    ? NotFound()
                    : Ok(new GetIngredientDto()
@@ -73,23 +66,12 @@ public class IngredientsController: ControllerBase
         [FromQuery(Name = "size")]
         [Range(1, 100)]
         [Required]
-        int size)
+        int size,
+        CancellationToken token)
     {
         _logger.LogTrace(nameof(SearchByName) + "(name={Name},page={Page},size={Size}) requested", name, page, size);
-        // var ingredients = await _context.Ingredients
-        //                                 .Where(i => i.NameSearchVector.Matches(EF.Functions.PlainToTsQuery("russian", name)))
-        //                                 .OrderBy(i => i.NameSearchVector.Rank(EF.Functions.PlainToTsQuery("russian", name)))
-        //                                 .ThenBy(i => i.Name)
-        //                                 .Skip(( page - 1 ) * size)
-        //                                 .Take(size)
-        //                                 .ToListAsync();
-        var ingredients = await _context.Ingredients
-                                        .Where(i => i.Name.ToLower().StartsWith(name.ToLower()))
-                                        .OrderBy(i => i.Name)
-                                        .Skip(( page - 1 ) * size)
-                                        .Take(size)
-                                        .ToListAsync();
-        
+        var ingredients = await _ingredients.FindByNameAsync(name, page, size, token);
+
         return Ok(ingredients.Select(i => new GetIngredientDto{Id = i.Id, Name = i.Name}));
     }
 }

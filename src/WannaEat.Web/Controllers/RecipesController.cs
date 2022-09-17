@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WannaEat.Application;
 using WannaEat.Domain.Entities;
+using WannaEat.Domain.Services;
 using WannaEat.Infrastructure.Persistence;
 using WannaEat.Web.Dto.Recipe;
 using WannaEat.Web.Infrastructure.Attributes;
@@ -15,12 +16,12 @@ namespace WannaEat.Web.Controllers;
 public class RecipesController: ControllerBase
 {
     private readonly IAggregatedRecipeProvider _recipeProvider;
-    private readonly WannaEatDbContext _context;
+    private readonly IIngredientRepository _ingredients;
 
-    public RecipesController(IAggregatedRecipeProvider recipeProvider, WannaEatDbContext context)
+    public RecipesController(IAggregatedRecipeProvider recipeProvider, IIngredientRepository ingredients)
     {
         _recipeProvider = recipeProvider;
-        _context = context;
+        _ingredients = ingredients;
     }
 
     [HttpGet("search")]
@@ -30,29 +31,16 @@ public class RecipesController: ControllerBase
         [FromQuery(Name = "page")] [Required] [Positive]
         int page,
         [FromQuery(Name = "size")] [Required] [Range(1, 100)]
-        int size)
+        int size,
+        CancellationToken token)
     {
-        var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(100));
-        var ingredients = await FindAllProductsByIdsAsync(productIds, page, size);
-        var recipes = await _recipeProvider.GetRecipesForIngredients(ingredients, tokenSource.Token);
+        var ingredients = await _ingredients.FindAllByIdAsync(productIds, token);
+        var recipes = await _recipeProvider.GetRecipesForIngredients(ingredients, 40, token);
         return Ok(recipes.Select(r => new GetRecipeDto
                                       {
                                           Name = r.Name,
                                           ImageUrl = r.ImageUrl?.ToString(),
                                           OriginUrl = r.Origin.ToString()
                                       }));
-    }
-
-    private async Task<List<Ingredient>> FindAllProductsByIdsAsync(int[] productIds, int page, int size)
-    {
-        var satisfiedProducts = await _context.Ingredients
-                                              .Where(i => productIds.Contains(i.Id))
-                                              .OrderBy(i => i.Id)
-                                              .Skip(( page - 1 ) * size)
-                                              .Take(size)
-                                              .ToListAsync();
-        return satisfiedProducts
-              .Select(p => new Ingredient(p.Id, p.Name))
-              .ToList();
     }
 }

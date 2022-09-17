@@ -1,4 +1,4 @@
-using WannaEat.Domain.Interfaces;
+using WannaEat.Domain.Services;
 
 namespace WannaEat.Application;
 

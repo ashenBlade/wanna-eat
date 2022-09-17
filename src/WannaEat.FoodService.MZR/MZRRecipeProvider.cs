@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using WannaEat.Domain.Entities;
-using WannaEat.Domain.Interfaces;
+using WannaEat.Domain.Services;
 using WannaEat.FoodService.MZR.Models;
 using Recipe = WannaEat.Domain.Entities.Recipe;
 
@@ -28,7 +28,9 @@ public class MZRRecipeProvider: IRecipeProvider
                              .Split(' ', StringSplitOptions.RemoveEmptyEntries));
     }
 
-    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients, CancellationToken token)
+    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients,
+                                                                    int max,
+                                                                    CancellationToken token)
     {
         try
         {
@@ -45,7 +47,8 @@ public class MZRRecipeProvider: IRecipeProvider
             }
             var recipes = mzr.Result?
                              .Recipes?
-                             .Select(f => f.ToDomainRecipe());
+                             .Select(f => f.ToDomainRecipe())
+                             .Take(max);
             return recipes ?? Enumerable.Empty<Recipe>();
         }
         catch (TaskCanceledException canceled)

@@ -1,5 +1,5 @@
 using WannaEat.Application;
-using WannaEat.Domain.Interfaces;
+using WannaEat.Domain.Services;
 using WannaEat.FoodService.MMenu;
 using WannaEat.FoodService.MZR;
 
@@ -7,7 +7,7 @@ namespace WannaEat.Web;
 
 public static class ProgramExtensions
 {
-    public static IServiceCollection AddRecipeServices(this IServiceCollection services)
+    public static IServiceCollection AddRecipeProviders(this IServiceCollection services)
     {
         services.AddHttpClient();
         services.AddScoped<IIngredientSearcher, ParallelIngredientSearcher>();

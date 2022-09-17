@@ -2,7 +2,7 @@
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using WannaEat.Domain.Entities;
-using WannaEat.Domain.Interfaces;
+using WannaEat.Domain.Services;
 using WannaEat.FoodService.MMenu.Models;
 using Recipe = WannaEat.Domain.Entities.Recipe;
 
@@ -20,7 +20,8 @@ public class MMenuRecipeProvider: IRecipeProvider
         _ingredientSearcher = ingredientSearcher;
         _logger = logger;
     }
-    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients, 
+    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients,
+                                                                    int max,
                                                                     CancellationToken cancellationToken)
     {
         var html = await DownloadRecipesPageForIngredients(ingredients, cancellationToken);
@@ -33,7 +34,8 @@ public class MMenuRecipeProvider: IRecipeProvider
               .Select(ParseRecipe)
               .Where(static r => r.Name is not null && 
                                  r.SourceAbsolutePath is not null)
-              .Select(static x => x.ToDomainRecipe());
+              .Select(static x => x.ToDomainRecipe())
+              .Take(max);
     }
 
     private static Models.Recipe ParseRecipe(HtmlNode node)

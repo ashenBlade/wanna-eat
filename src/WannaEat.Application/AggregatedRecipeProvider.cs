@@ -1,5 +1,5 @@
 using WannaEat.Domain.Entities;
-using WannaEat.Domain.Interfaces;
+using WannaEat.Domain.Services;
 
 namespace WannaEat.Application;
 
@@ -11,11 +11,13 @@ public class AggregatedRecipeProvider: IAggregatedRecipeProvider
     {
         _recipeServices = recipeServices;
     }
-    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients,
+                                                                    int max,
+                                                                    CancellationToken cancellationToken)
     {
         var recipes =
             await Task.WhenAll(_recipeServices
-                                  .Select(s => s.GetRecipesForIngredients(ingredients, cancellationToken)));
+                                  .Select(s => s.GetRecipesForIngredients(ingredients, max, cancellationToken)));
         return recipes
            .SelectMany(r => r);
     }

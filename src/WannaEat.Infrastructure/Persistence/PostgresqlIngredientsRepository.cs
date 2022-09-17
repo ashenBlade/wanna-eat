@@ -31,12 +31,27 @@ public class PostgresqlIngredientsRepository: IIngredientRepository
         }
 
         var dbIngredients =  await _context.Ingredients
-                             .Where(i => i.Name.ToLower().StartsWith(name.ToLower()))
-                             .OrderBy(i => i.Name)
-                             .Skip(( page - 1 ) * size)
-                             .Take(size)
-                             .ToListAsync(token);
+                                           .Where(i => i.Name.ToLower().StartsWith(name.ToLower()))
+                                           .OrderBy(i => i.Name)
+                                           .Skip(( page - 1 ) * size)
+                                           .Take(size)
+                                           .ToListAsync(token);
         return dbIngredients
+              .Select(i => new Ingredient(i.Id, i.Name))
+              .ToList();
+    }
+
+    public async Task<List<Ingredient>> FindAllByIdAsync(int[] ids, CancellationToken token = default)
+    {
+        if (ids is null)
+        {
+            throw new ArgumentNullException(nameof(ids));
+        }
+
+        var ingredients = await _context.Ingredients
+                                        .Where(i => ids.Contains(i.Id))
+                                        .ToListAsync(token);
+        return ingredients
               .Select(i => new Ingredient(i.Id, i.Name))
               .ToList();
     }
@@ -44,7 +59,7 @@ public class PostgresqlIngredientsRepository: IIngredientRepository
     public async Task<Ingredient?> FindByIdAsync(int id, CancellationToken token = default)
     {
         var dbIngredient = await _context.Ingredients
-                                                 .SingleOrDefaultAsync(i => i.Id == id, token);
+                                         .SingleOrDefaultAsync(i => i.Id == id, token);
         
         return dbIngredient is null 
                    ? null 
