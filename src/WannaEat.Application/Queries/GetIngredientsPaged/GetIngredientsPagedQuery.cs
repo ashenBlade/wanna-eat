@@ -5,7 +5,7 @@ namespace WannaEat.Application.Queries.GetIngredientsPaged;
 
 public class GetIngredientsPagedQuery: IRequest<IEnumerable<Ingredient>>
 {
-    public GetIngredientsPagedQuery(int size, int page)
+    public GetIngredientsPagedQuery(int page, int size)
     {
         if (size < 1)
         {

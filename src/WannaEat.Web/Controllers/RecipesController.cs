@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using WannaEat.Application;
-using WannaEat.Domain.Services;
+using WannaEat.Application.Queries.FindRecipes;
 using WannaEat.Web.Dto.Recipe;
 using WannaEat.Web.Infrastructure.Attributes;
 
@@ -12,25 +12,22 @@ namespace WannaEat.Web.Controllers;
 [Route("api/v1/recipes")]
 public class RecipesController: ControllerBase
 {
-    private readonly IAggregatedRecipeProvider _recipeProvider;
-    private readonly IIngredientRepository _ingredients;
+    private readonly IMediator _mediator;
 
-    public RecipesController(IAggregatedRecipeProvider recipeProvider, IIngredientRepository ingredients)
+    public RecipesController(IMediator mediator)
     {
-        _recipeProvider = recipeProvider;
-        _ingredients = ingredients;
+        _mediator = mediator;
     }
 
     [HttpGet("search")]
     public async Task<ActionResult<IEnumerable<GetRecipeDto>>> GetSatisfiedRecipes(
         [FromQuery(Name = "contain")] [Required]
-        int[] productIds,
+        int[] ingredientIds,
         [FromQuery(Name = "max")] [Positive]
         int max = 20,
         CancellationToken token = default)
     {
-        var ingredients = await _ingredients.FindAllByIdAsync(productIds, token);
-        var recipes = await _recipeProvider.GetRecipesForIngredients(ingredients, max, token);
+        var recipes = await _mediator.Send(new FindRecipesQuery(ingredientIds, max), token);
         return Ok(recipes.Select(r => new GetRecipeDto
                                       {
                                           Name = r.Name,
