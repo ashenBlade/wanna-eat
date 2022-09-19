@@ -47,22 +47,22 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     };
 
     const loadFirstProductPage = async () => {
-        console.log('loadFirstProductPage')
         if (productsLoading || recipesLoading) {
-            console.log('loadFirstProductPage already loading')
             return;
         }
         setProductsLoading(true);
         try {
             const products = await ingredientsRepository.getProductsAsync( 1, defaultPageSize);
             const filtered = filterUnselectedProducts(products);
-            setCanDownloadMoreProducts(filtered.length >= defaultPageSize);
+            setCanDownloadMoreProducts(products.length >= defaultPageSize);
+            console.log(products.length >= defaultPageSize);
             setProducts(filtered);
+            resetProductsPage();
         } catch (e) {
             console.error('Error while loading products by page', e);
+            throw e;
         } finally {
             setProductsLoading(false);
-            resetProductsPage();
         }
     }
 
@@ -177,7 +177,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                 console.log('useEffect with shouldUseProductName')
                 await loadProductsFirstPageBySearchName();
             } else if (isProductSearchNameEmpty()) {
-                console.log('useEffect with not shouldUseProductName')
+                console.log('useEffect with isProductSearchNameEmpty')
                 await loadFirstProductPage();
             }
         }, searchDelaySeconds * 1000);

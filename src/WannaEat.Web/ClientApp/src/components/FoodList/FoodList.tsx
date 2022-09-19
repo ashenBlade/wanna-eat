@@ -37,17 +37,13 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, ad
             </div>);
 
     const {ref, inView} = useInView({
-        // delay: 1,
-        // threshold: 1,
-        triggerOnce: true
-    });
-
-    useEffect(() => {
-        if (inView && onScrollToEnd) {
-            onScrollToEnd();
+        triggerOnce: true,
+        onChange: inView1 => {
+            if (inView1 && onScrollToEnd) {
+                onScrollToEnd()
+            }
         }
-    }, [inView]);
-
+    });
 
     const createFoodsList = (foods: TFood[]) => {
         if (foods.length === 0) {
