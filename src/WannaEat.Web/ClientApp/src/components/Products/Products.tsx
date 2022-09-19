@@ -84,42 +84,32 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         }
     }
 
-    const loadExtraProductsPaged = async (page: number) => {
+    const loadProductsPaged = async (page: number) => {
         console.log('loadExtraProductsPaged', page)
         setProductsLoading(true);
         try {
-            return await ingredientsRepository.getProductsAsync( page, defaultPageSize);
-        } catch (e) {
-            console.error('Error while loading products by page', e);
-            return [];
+            return await ingredientsRepository.getProductsAsync(page, defaultPageSize);
         } finally {
             setProductsLoading(false);
         }
     }
 
-    const loadExtraProductsByName = async (name: string, page: number) => {
+    const loadProductsByName = async (name: string, page: number) => {
         console.log('loadExtraProductsByName', {page, name})
         setProductsLoading(true);
         try {
             return await ingredientsRepository.findWithName(name, page, defaultPageSize);
-        } catch (e) {
-            console.error('Could not download products', e);
-            return [];
         } finally {
             setProductsLoading(false);
         }
     }
 
-    const onProductPageScrollToEnd = () => {
+    const onProductPageScrollToEnd = async () => {
         console.log('onProductPageScrollToEnd')
         if (productsLoading || !canDownloadMoreProducts) {
             return;
         }
-        setProductsLoading(true)
-        loadNextProductsPage()
-            .finally(() => {
-                setProductsLoading(false)
-            });
+        await loadNextProductsPage();
     }
 
     const loadNextProductsPage = async () => {
@@ -127,18 +117,21 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
             return;
         }
 
+        setProductsLoading(true);
         const nextPage = toNextProductsPage();
         console.log('loadNextProductsPage', nextPage);
         try {
             const loaded = await (shouldUseProductName()
-                ?    loadExtraProductsByName(productSearchName, nextPage)
-                :    loadExtraProductsPaged(nextPage));
+                ?    loadProductsByName(productSearchName, nextPage)
+                :    loadProductsPaged(nextPage));
             setCanDownloadMoreProducts(loaded.length >= defaultPageSize);
             appendToProducts(loaded);
         } catch (e) {
-            console.error('Could not download next product page', e)
+            console.error('Could not download next product page', e);
             toPrevProductsPage();
             setCanDownloadMoreProducts(false);
+        } finally {
+            setProductsLoading(false);
         }
     }
 
@@ -173,6 +166,10 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         return productSearchName.length > 3;
     }
 
+    function isProductSearchNameEmpty() {
+        return productSearchName.length === 0;
+    }
+
     useEffect(() => {
         window.clearTimeout(searchTimeout);
 
@@ -180,7 +177,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
             if (shouldUseProductName()) {
                 console.log('useEffect with shouldUseProductName')
                 await loadProductsFirstPageBySearchName();
-            } else {
+            } else if (isProductSearchNameEmpty()) {
                 console.log('useEffect with not shouldUseProductName')
                 await loadFirstProductPage();
             }
@@ -192,7 +189,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
 
     useEffect(() => {
         loadFirstProductPage();
-    }, []);
+    }, [loadFirstProductPage]);
 
     const onCalculateButtonClick = async () => {
         setCalculateButtonEnabled(false);
@@ -230,6 +227,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                                type={'text'}
                                placeholder={'Что искать?'}
                                value={productSearchName}
+                               disabled={recipesLoading}
                                onChange={e => setProductSearchName(e.currentTarget.value)}/>
                     </div>
                 </div>
