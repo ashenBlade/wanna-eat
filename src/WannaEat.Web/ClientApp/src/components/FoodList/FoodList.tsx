@@ -8,22 +8,22 @@ import {useInView} from "react-intersection-observer";
 const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, additionalAction, isLoading, onScrollToEnd}: FoodListProps<TFood>) => {
     const placeholder = emptyListPlaceholder ?? '';
     const {sign, hint} = additionalAction ?? {sign: undefined, hint: ''}
+
     const onChooseInner = (f: TFood) => onChoose ? onChoose(f) : null;
 
 
-
     const createFoodListElement = (f: TFood, ref?: Ref<any>) => sign === undefined
-        ? (<li key={f.name}
+        ? (<div key={f.name}
                onClick={_ => onChooseInner(f)}
-               value={f.name}
+               // value={f.name}
                ref={ref}
                className={'list-group-item p-1 p-md-2 cursor-pointer food-list-item'}>
             <span>
                 {f.name}
             </span>
-        </li>)
-        : (<li key={f.name}
-               value={f.name}
+        </div>)
+        : (<div key={f.name}
+               // value={f.name}
                ref={ref}
                className={'list-group-item p-1 p-md-2 food-list-item'}>
                 <span>
@@ -34,20 +34,19 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, ad
                       className={'cursor-pointer'}>
                     {sign}
                 </span>
-            </li>);
+            </div>);
 
     const {ref, inView} = useInView({
-        delay: 1,
-        threshold: 1,
+        // delay: 1,
+        // threshold: 1,
         triggerOnce: true
     });
-
 
     useEffect(() => {
         if (inView && onScrollToEnd) {
             onScrollToEnd();
         }
-    }, [inView, onScrollToEnd]);
+    }, [inView]);
 
 
     const createFoodsList = (foods: TFood[]) => {
@@ -62,7 +61,7 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, ad
     return (
         <div className={'h-100'}>
             <div className={'food-scroll bg-light p-2 rounded-1 h-100'}>
-                <ul className={'list-group rounded-1 h-0'}>
+                <div className={'list-group rounded-1 h-0'}>
                     {
                         foods.length > 0
                             ? createFoodsList(foods)
@@ -79,7 +78,7 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, ad
                             </div>
                             : <></>
                     }
-                </ul>
+                </div>
             </div>
         </div>
     );

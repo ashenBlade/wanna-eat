@@ -36,21 +36,19 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
 
     const searchDelaySeconds = 0.3;
 
-    const defaultPageSize = 15
+    const defaultPageSize = 15;
 
-    function filterUnselectedProducts(products: Ingredient[]) {
-        return [...products.filter(p => !selectedProducts.some(sp => sp.id === p.id))];
-    }
+    const filterUnselectedProducts = (products: Ingredient[]) => [...products.filter(p => !selectedProducts.some(sp => sp.id === p.id))];
 
-    function appendToProducts(loaded: Ingredient[]) {
+    const appendToProducts = (loaded: Ingredient[]) => {
         const resultProducts = filterUnselectedProducts([...products, ...loaded]);
         console.log('appendToProducts', resultProducts);
         setProducts(resultProducts);
-    }
+    };
 
     const loadFirstProductPage = async () => {
         console.log('loadFirstProductPage')
-        if (productsLoading) {
+        if (productsLoading || recipesLoading) {
             console.log('loadFirstProductPage already loading')
             return;
         }
@@ -69,6 +67,9 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     }
 
     const loadProductsFirstPageBySearchName = async () => {
+        if (productsLoading || recipesLoading) {
+            return;
+        }
         console.log('loadProductsFirstPageBySearchName');
         setProductsLoading(true);
         try {
@@ -93,7 +94,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
             setProductsLoading(false);
         }
     }
-
     const loadProductsByName = async (name: string, page: number) => {
         console.log('loadExtraProductsByName', {page, name})
         setProductsLoading(true);
@@ -107,13 +107,17 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     const onProductPageScrollToEnd = async () => {
         console.log('onProductPageScrollToEnd')
         if (productsLoading || !canDownloadMoreProducts) {
+            console.log('onProductPageScrollToEnd not loading products loading already')
             return;
         }
         await loadNextProductsPage();
     }
 
+    const shouldUseProductName = () => productSearchName.length > 3;
+
     const loadNextProductsPage = async () => {
         if (productsLoading || !canDownloadMoreProducts) {
+            console.log('loadNextProductsPage early return')
             return;
         }
 
@@ -162,13 +166,8 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
             setCalculateButtonEnabled(true);
     }, [selectedProducts]);
 
-    function shouldUseProductName() {
-        return productSearchName.length > 3;
-    }
 
-    function isProductSearchNameEmpty() {
-        return productSearchName.length === 0;
-    }
+    const isProductSearchNameEmpty = () => productSearchName.length === 0;
 
     useEffect(() => {
         window.clearTimeout(searchTimeout);
@@ -187,9 +186,10 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [productSearchName]);
 
-    useEffect(() => {
-        loadFirstProductPage();
-    }, [loadFirstProductPage]);
+    // useEffect(() => {
+    //     loadFirstProductPage();
+    //     console.log('fuck useeffect')
+    // }, []);
 
     const onCalculateButtonClick = async () => {
         setCalculateButtonEnabled(false);
