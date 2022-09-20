@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useReducer, useState} from 'react';
 import {Ingredient} from "../../entities/ingredient";
 import {Recipe} from "../../entities/recipe";
 import './Products.tsx.css';
@@ -11,19 +11,20 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     const [selectedProducts, setSelectedProducts] = useState<Ingredient[]>([]);
     const [productsLoading, setProductsLoading] = useState(false);
     const [canDownloadMoreProducts, setCanDownloadMoreProducts] = useState(true);
+    // const [_, rerender] = useReducer(x => x + 1, 0);
     const [productsPage, toNextProductsPage, toPrevProductsPage, resetProductsPage] = usePagination({
         minPage: 1,
         startPage: 1,
     });
 
     const moveToSelected = (product: Ingredient) => {
-        setProducts([...products.filter(p => p.id !== product.id)])
-        setSelectedProducts([...selectedProducts, product])
+        setProducts([...products.filter(p => p.id !== product.id)]);
+        setSelectedProducts([...selectedProducts, product]);
     }
 
     const moveToProducts = (product: Ingredient) => {
-        setSelectedProducts([...selectedProducts.filter(sp => sp.id !== product.id)])
-        setProducts([...products, product])
+        setSelectedProducts([...selectedProducts.filter(sp => sp.id !== product.id)]);
+        setProducts([...products, product]);
     }
 
     const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -36,14 +37,12 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
 
     const searchDelaySeconds = 0.3;
 
-    const defaultPageSize = 15;
+    const defaultPageSize = 40;
 
     const filterUnselectedProducts = (products: Ingredient[]) => [...products.filter(p => !selectedProducts.some(sp => sp.id === p.id))];
 
     const appendToProducts = (loaded: Ingredient[]) => {
-        const resultProducts = filterUnselectedProducts([...products, ...loaded]);
-        console.log('appendToProducts', resultProducts);
-        setProducts(resultProducts);
+        setProducts(filterUnselectedProducts([...products, ...loaded]));
     };
 
     const loadFirstProductPage = async () => {
@@ -55,7 +54,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
             const products = await ingredientsRepository.getProductsAsync( 1, defaultPageSize);
             const filtered = filterUnselectedProducts(products);
             setCanDownloadMoreProducts(products.length >= defaultPageSize);
-            console.log(products.length >= defaultPageSize);
             setProducts(filtered);
             resetProductsPage();
         } catch (e) {
@@ -70,7 +68,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         if (productsLoading || recipesLoading) {
             return;
         }
-        console.log('loadProductsFirstPageBySearchName');
         setProductsLoading(true);
         try {
             const products = await ingredientsRepository.findWithName( productSearchName, 1, defaultPageSize);
@@ -86,7 +83,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     }
 
     const loadProductsPaged = async (page: number) => {
-        console.log('loadExtraProductsPaged', page)
         setProductsLoading(true);
         try {
             return await ingredientsRepository.getProductsAsync(page, defaultPageSize);
@@ -95,7 +91,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         }
     }
     const loadProductsByName = async (name: string, page: number) => {
-        console.log('loadExtraProductsByName', {page, name})
         setProductsLoading(true);
         try {
             return await ingredientsRepository.findWithName(name, page, defaultPageSize);
@@ -105,9 +100,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     }
 
     const onProductPageScrollToEnd = async () => {
-        console.log('onProductPageScrollToEnd')
         if (productsLoading || !canDownloadMoreProducts) {
-            console.log('onProductPageScrollToEnd not loading products loading already')
             return;
         }
         await loadNextProductsPage();
@@ -117,13 +110,11 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
 
     const loadNextProductsPage = async () => {
         if (productsLoading || !canDownloadMoreProducts) {
-            console.log('loadNextProductsPage early return')
             return;
         }
 
         setProductsLoading(true);
         const nextPage = toNextProductsPage();
-        console.log('loadNextProductsPage', nextPage);
         try {
             const loaded = await (shouldUseProductName()
                 ?    loadProductsByName(productSearchName, nextPage)
@@ -157,7 +148,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     const [calculateButtonEnabled, setCalculateButtonEnabled] = useState(true);
 
     const redirectToRecipe = (r: Recipe) => {
-        console.log(r.originUrl);
         window.open(r.originUrl, '_blank');
     }
 
@@ -174,10 +164,8 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
 
         const handle = window.setTimeout(async () => {
             if (shouldUseProductName()) {
-                console.log('useEffect with shouldUseProductName')
                 await loadProductsFirstPageBySearchName();
             } else if (isProductSearchNameEmpty()) {
-                console.log('useEffect with isProductSearchNameEmpty')
                 await loadFirstProductPage();
             }
         }, searchDelaySeconds * 1000);
@@ -185,11 +173,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [productSearchName]);
-
-    // useEffect(() => {
-    //     loadFirstProductPage();
-    //     console.log('fuck useeffect')
-    // }, []);
 
     const onCalculateButtonClick = async () => {
         setCalculateButtonEnabled(false);

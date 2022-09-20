@@ -1,11 +1,17 @@
-import React, {Ref, useEffect} from 'react';
+import React, {Ref} from 'react';
 import './FoodList.tsx.css'
 import {Food} from "../../entities/food";
 import {FoodListProps} from "./FoodListProps";
 import Loader from "../Loader/Loader";
 import {useInView} from "react-intersection-observer";
 
-const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, additionalAction, isLoading, onScrollToEnd}: FoodListProps<TFood>) => {
+const FoodList = <TFood extends Food>({foods,
+                                          emptyListPlaceholder,
+                                          onChoose,
+                                          additionalAction,
+                                          isLoading,
+                                          onScrollToEnd
+                                      }: FoodListProps<TFood>) => {
     const placeholder = emptyListPlaceholder ?? '';
     const {sign, hint} = additionalAction ?? {sign: undefined, hint: ''}
 
@@ -15,7 +21,6 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, ad
     const createFoodListElement = (f: TFood, ref?: Ref<any>) => sign === undefined
         ? (<div key={f.name}
                onClick={_ => onChooseInner(f)}
-               // value={f.name}
                ref={ref}
                className={'list-group-item p-1 p-md-2 cursor-pointer food-list-item'}>
             <span>
@@ -23,7 +28,6 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, ad
             </span>
         </div>)
         : (<div key={f.name}
-               // value={f.name}
                ref={ref}
                className={'list-group-item p-1 p-md-2 food-list-item'}>
                 <span>
@@ -36,10 +40,10 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, ad
                 </span>
             </div>);
 
-    const {ref, inView} = useInView({
+    const {ref} = useInView({
         triggerOnce: true,
-        onChange: inView1 => {
-            if (inView1 && onScrollToEnd) {
+        onChange: isVisible => {
+            if (isVisible && onScrollToEnd) {
                 onScrollToEnd()
             }
         }
@@ -51,7 +55,9 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, ad
         }
 
         const lastElementIndex = foods.length - 1;
-        return foods.map((f, i) => createFoodListElement(f, i === lastElementIndex && onScrollToEnd ? ref : null))
+        return foods.map((f, i) => createFoodListElement(f, i === lastElementIndex && onScrollToEnd
+            ? ref
+            : null))
     }
 
     return (
@@ -69,7 +75,7 @@ const FoodList = <TFood extends Food>({foods, emptyListPlaceholder, onChoose, ad
                     }
                     {
                         isLoading
-                            ? <div className={'justify-content-center d-flex'}>
+                            ? <div className={'justify-content-center pt-4 d-flex'}>
                                 <Loader color={'gray'}/>
                             </div>
                             : <></>
