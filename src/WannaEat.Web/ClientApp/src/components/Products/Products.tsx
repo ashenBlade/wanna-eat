@@ -7,25 +7,16 @@ import {ProductsPageProps} from "./ProductsPageProps";
 import {usePagination} from "../../hooks/usePagination/usePagination";
 
 const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) => {
-    const [products, setProducts] = useState<Ingredient[]>([]);
-    const [selectedProducts, setSelectedProducts] = useState<Ingredient[]>([]);
+    const [products, ] = useState<Ingredient[]>([]);
+    const [selectedProducts, ] = useState<Ingredient[]>([]);
     const [productsLoading, setProductsLoading] = useState(false);
     const [canDownloadMoreProducts, setCanDownloadMoreProducts] = useState(true);
-    // const [_, rerender] = useReducer(x => x + 1, 0);
-    const [productsPage, toNextProductsPage, toPrevProductsPage, resetProductsPage] = usePagination({
+    const [, rerender] = useReducer(x => x + 1, 0);
+    const [, toNextProductsPage, toPrevProductsPage, resetProductsPage] = usePagination({
         minPage: 1,
         startPage: 1,
     });
 
-    const moveToSelected = (product: Ingredient) => {
-        setProducts([...products.filter(p => p.id !== product.id)]);
-        setSelectedProducts([...selectedProducts, product]);
-    }
-
-    const moveToProducts = (product: Ingredient) => {
-        setSelectedProducts([...selectedProducts.filter(sp => sp.id !== product.id)]);
-        setProducts([...products, product]);
-    }
 
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [recipesListMessage, setRecipesListMessage] = useState('Здесь появится, то что можно приготовить');
@@ -36,26 +27,45 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     const [productSearchName, setProductSearchName] = useState('');
 
     const searchDelaySeconds = 0.3;
-
     const defaultPageSize = 40;
+
+
+    const isInLoadingState = () => productsLoading || recipesLoading;
+    const shouldUseProductName = () => productSearchName.length > 3;
+    const anyProductSelected = () => selectedProducts.length !== 0;
+    const isProductSearchNameEmpty = () => productSearchName.length === 0;
+
+    const moveToSelected = (product: Ingredient) => {
+        products.splice(products.indexOf(product), 1);
+        selectedProducts.push(product);
+        rerender();
+    }
+
+    const moveToProducts = (product: Ingredient) => {
+        selectedProducts.splice(selectedProducts.indexOf(product), 1);
+        products.push(product);
+        rerender();
+    }
 
     const filterUnselectedProducts = (products: Ingredient[]) => [...products.filter(p => !selectedProducts.some(sp => sp.id === p.id))];
 
     const appendToProducts = (loaded: Ingredient[]) => {
-        setProducts(filterUnselectedProducts([...products, ...loaded]));
+        products.push(...loaded);
+        rerender();
     };
 
     const loadFirstProductPage = async () => {
-        if (productsLoading || recipesLoading) {
+        if (isInLoadingState()) {
             return;
         }
         setProductsLoading(true);
         try {
-            const products = await ingredientsRepository.getProductsAsync( 1, defaultPageSize);
-            const filtered = filterUnselectedProducts(products);
-            setCanDownloadMoreProducts(products.length >= defaultPageSize);
-            setProducts(filtered);
+            const loaded = await ingredientsRepository.getProductsAsync( 1, defaultPageSize);
+            setCanDownloadMoreProducts(loaded.length >= defaultPageSize);
+            products.length = 0;
+            products.push(...(filterUnselectedProducts(loaded)))
             resetProductsPage();
+            rerender();
         } catch (e) {
             console.error('Error while loading products by page', e);
             throw e;
@@ -65,15 +75,18 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     }
 
     const loadProductsFirstPageBySearchName = async () => {
-        if (productsLoading || recipesLoading) {
+        if (isInLoadingState()) {
             return;
         }
         setProductsLoading(true);
         try {
-            const products = await ingredientsRepository.findWithName( productSearchName, 1, defaultPageSize);
-            const filtered = filterUnselectedProducts(products);
+            const loaded = await ingredientsRepository.findWithName(productSearchName, 1, defaultPageSize);
+            const filtered = filterUnselectedProducts(loaded);
             setCanDownloadMoreProducts(filtered.length >= defaultPageSize);
-            setProducts(filtered);
+            products.length = 0;
+            products.push(...filtered);
+            resetProductsPage();
+            rerender();
         } catch (e) {
             console.error('Error while loading products by page', e);
         } finally {
@@ -81,6 +94,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
             resetProductsPage();
         }
     }
+
 
     const loadProductsPaged = async (page: number) => {
         setProductsLoading(true);
@@ -106,10 +120,9 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         await loadNextProductsPage();
     }
 
-    const shouldUseProductName = () => productSearchName.length > 3;
 
     const loadNextProductsPage = async () => {
-        if (productsLoading || !canDownloadMoreProducts) {
+        if (isInLoadingState() || !canDownloadMoreProducts) {
             return;
         }
 
@@ -117,8 +130,8 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         const nextPage = toNextProductsPage();
         try {
             const loaded = await (shouldUseProductName()
-                ?    loadProductsByName(productSearchName, nextPage)
-                :    loadProductsPaged(nextPage));
+                ? loadProductsByName(productSearchName, nextPage)
+                : loadProductsPaged(nextPage));
             setCanDownloadMoreProducts(loaded.length >= defaultPageSize);
             appendToProducts(loaded);
         } catch (e) {
@@ -145,19 +158,10 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
         setProductSearchName('');
     }
 
-    const [calculateButtonEnabled, setCalculateButtonEnabled] = useState(true);
-
     const redirectToRecipe = (r: Recipe) => {
         window.open(r.originUrl, '_blank');
     }
 
-    useEffect(() => {
-        if (selectedProducts.length !== 0)
-            setCalculateButtonEnabled(true);
-    }, [selectedProducts]);
-
-
-    const isProductSearchNameEmpty = () => productSearchName.length === 0;
 
     useEffect(() => {
         window.clearTimeout(searchTimeout);
@@ -175,7 +179,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
     }, [productSearchName]);
 
     const onCalculateButtonClick = async () => {
-        setCalculateButtonEnabled(false);
         setRecipesLoading(true);
         try {
             const recipes = await foodService.findRelevantRecipes(selectedProducts);
@@ -184,9 +187,8 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                 : '');
             showRecipes(recipes);
         } catch (e) {
-            setRecipesListMessage('Во время запроса произошла ошибка')
+            setRecipesListMessage('Во время запроса произошла ошибка. Приносим извинения')
         } finally {
-            setCalculateButtonEnabled(true);
             setRecipesLoading(false);
         }
     }
@@ -218,7 +220,7 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                 <div className={'p-1'}>
                     <button className={'btn btn-success w-100'}
                             onClick={onCalculateButtonClick}
-                            disabled={!calculateButtonEnabled}>
+                            disabled={!anyProductSelected() || recipesLoading}>
                         Подсчитать
                     </button>
                 </div>

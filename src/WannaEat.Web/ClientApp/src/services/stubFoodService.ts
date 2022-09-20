@@ -49,6 +49,6 @@ export class StubFoodService implements IRecipeService {
         this.recipes = recipes || StubFoodService.recipes;
     }
     findRelevantRecipes(products: Ingredient[]): Promise<Recipe[]> {
-        return Promise.resolve(this.recipes);
+        return new Promise(r => setTimeout(() => r(this.recipes), 1000));
     }
 }
