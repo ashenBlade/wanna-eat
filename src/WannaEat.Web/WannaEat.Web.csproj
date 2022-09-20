@@ -16,8 +16,13 @@
   </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />
         <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.9">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
@@ -30,6 +35,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\WannaEat.Application\WannaEat.Application.csproj" />
       <ProjectReference Include="..\WannaEat.FoodService.MMenu\WannaEat.FoodService.MMenu.csproj" />
       <ProjectReference Include="..\WannaEat.FoodService.MZR\WannaEat.FoodService.MZR.csproj" />
       <ProjectReference Include="..\WannaEat.Infrastructure\WannaEat.Infrastructure.csproj" />

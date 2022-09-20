@@ -52,7 +52,9 @@ export class StubIngredientsRepository implements IIngredientsRepository {
     }
     
     findWithName(name: string, pageNumber: number, max: number): Promise<Ingredient[]> {
-        return Promise.resolve(this.ingredients.filter(i => i.name.match(name)).slice((pageNumber - 1) * max, pageNumber * max));
+        // return Promise.resolve(this.ingredients.filter(i => i.name.match(name)).slice((pageNumber - 1) * max, pageNumber * max));
+        const lower = name.toLowerCase();
+        return new Promise(r => setTimeout(() => r(this.ingredients.filter(i => i.name.toLowerCase().match(lower)).slice((pageNumber - 1) * max, pageNumber * max)), 1000));
     }
 
     getProductById(id: number): Promise<Ingredient | null> {
@@ -60,7 +62,8 @@ export class StubIngredientsRepository implements IIngredientsRepository {
     }
 
     getProductsAsync(pageNumber: number, pageSize: number): Promise<Ingredient[]> {
-        return Promise.resolve(this.ingredients.slice((pageNumber - 1) * pageSize, pageNumber * pageSize));
+        // return Promise.resolve(this.ingredients.slice((pageNumber - 1) * pageSize, pageNumber * pageSize));
+        return new Promise(r => setTimeout(() => r(this.ingredients.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)), 1000));
     }
 
 }

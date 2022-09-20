@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WannaEat.FoodService.MMenu"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WannaEat.Shared", "WannaEat.Shared\WannaEat.Shared.csproj", "{8EE48D2D-30F6-4F7A-A4B2-92F93CB609B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WannaEat.Application", "WannaEat.Application\WannaEat.Application.csproj", "{D480A436-6332-4700-9875-3D7EA5A0D508}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{8EE48D2D-30F6-4F7A-A4B2-92F93CB609B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EE48D2D-30F6-4F7A-A4B2-92F93CB609B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EE48D2D-30F6-4F7A-A4B2-92F93CB609B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D480A436-6332-4700-9875-3D7EA5A0D508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D480A436-6332-4700-9875-3D7EA5A0D508}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D480A436-6332-4700-9875-3D7EA5A0D508}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D480A436-6332-4700-9875-3D7EA5A0D508}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6EC35FDA-B79A-47B8-99D9-FCB07B0788AA} = {17D36D4A-D339-4BA9-819F-891BCED65FC3}

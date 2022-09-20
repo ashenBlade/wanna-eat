@@ -2,25 +2,26 @@
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using WannaEat.Domain.Entities;
-using WannaEat.Domain.Interfaces;
+using WannaEat.Domain.Services;
 using WannaEat.FoodService.MMenu.Models;
 using Recipe = WannaEat.Domain.Entities.Recipe;
 
 namespace WannaEat.FoodService.MMenu;
 
-public class MMenuRecipeService: IRecipeService
+public class MMenuRecipeProvider: IRecipeProvider
 {
     private readonly HttpClient _client;
     private readonly IIngredientSearcher _ingredientSearcher;
-    private readonly ILogger<MMenuRecipeService> _logger;
+    private readonly ILogger<MMenuRecipeProvider> _logger;
 
-    public MMenuRecipeService(HttpClient client, IIngredientSearcher ingredientSearcher, ILogger<MMenuRecipeService> logger)
+    public MMenuRecipeProvider(HttpClient client, IIngredientSearcher ingredientSearcher, ILogger<MMenuRecipeProvider> logger)
     {
         _client = client;
         _ingredientSearcher = ingredientSearcher;
         _logger = logger;
     }
-    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients, 
+    public async Task<IEnumerable<Recipe>> GetRecipesForIngredients(IEnumerable<Ingredient> ingredients,
+                                                                    int max,
                                                                     CancellationToken cancellationToken)
     {
         var html = await DownloadRecipesPageForIngredients(ingredients, cancellationToken);
@@ -33,7 +34,8 @@ public class MMenuRecipeService: IRecipeService
               .Select(ParseRecipe)
               .Where(static r => r.Name is not null && 
                                  r.SourceAbsolutePath is not null)
-              .Select(static x => x.ToDomainRecipe());
+              .Select(static x => x.ToDomainRecipe())
+              .Take(max);
     }
 
     private static Models.Recipe ParseRecipe(HtmlNode node)

@@ -1,7 +1,7 @@
 import {IIngredientsRepository} from "../../interfaces/iIngredientRepository";
-import {IFoodService} from "../../interfaces/iFoodService";
+import {IRecipeService} from "../../interfaces/IRecipeService";
 
 export interface ProductsPageProps {
     ingredientsRepository: IIngredientsRepository
-    foodService: IFoodService
+    foodService: IRecipeService
 }

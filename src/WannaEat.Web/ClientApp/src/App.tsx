@@ -5,8 +5,8 @@ import {StubIngredientsRepository} from "./services/stubIngredientsRepository";
 import {StubFoodService} from "./services/stubFoodService";
 import {ExternalIngredientsRepository} from "./services/externalIngredientsRepository";
 import {IIngredientsRepository} from "./interfaces/iIngredientRepository";
-import {IFoodService} from "./interfaces/iFoodService";
-import {ExternalFoodService} from "./services/externalFoodService";
+import {IRecipeService} from "./interfaces/IRecipeService";
+import {ExternalRecipeService} from "./services/externalRecipeService";
 
 const isProduction = process.env.NODE_ENV?.toLowerCase().indexOf('production') !== -1 ?? false; 
 const useStubs = process.env.REACT_APP_USE_STUBS?.toLowerCase() === "true" ?? false;
@@ -19,10 +19,10 @@ const getIngredientsRepository = (): IIngredientsRepository => {
         : new ExternalIngredientsRepository();
 }
 
-const getFoodService = (): IFoodService => {
+const getFoodService = (): IRecipeService => {
     return shouldUseStubs()
         ? new StubFoodService()
-        : new ExternalFoodService();
+        : new ExternalRecipeService();
 }
 
 

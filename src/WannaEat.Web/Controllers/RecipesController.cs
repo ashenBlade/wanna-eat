@@ -1,12 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WannaEat.Domain.Entities;
-using WannaEat.Domain.Interfaces;
-using WannaEat.Infrastructure.Persistence;
+using WannaEat.Application.Queries.FindRecipes;
 using WannaEat.Web.Dto.Recipe;
 using WannaEat.Web.Infrastructure.Attributes;
-using WannaEat.Web.Infrastructure.Interfaces;
 
 
 namespace WannaEat.Web.Controllers;
@@ -15,45 +12,27 @@ namespace WannaEat.Web.Controllers;
 [Route("api/v1/recipes")]
 public class RecipesController: ControllerBase
 {
-    private readonly IAggregatedRecipeService _recipeService;
-    private readonly WannaEatDbContext _context;
+    private readonly IMediator _mediator;
 
-    public RecipesController(IAggregatedRecipeService recipeService, WannaEatDbContext context)
+    public RecipesController(IMediator mediator)
     {
-        _recipeService = recipeService;
-        _context = context;
+        _mediator = mediator;
     }
 
     [HttpGet("search")]
     public async Task<ActionResult<IEnumerable<GetRecipeDto>>> GetSatisfiedRecipes(
         [FromQuery(Name = "contain")] [Required]
-        int[] productIds,
-        [FromQuery(Name = "page")] [Required] [Positive]
-        int page,
-        [FromQuery(Name = "size")] [Required] [Range(1, 100)]
-        int size)
+        int[] ingredientIds,
+        [FromQuery(Name = "max")] [Positive]
+        int max = 20,
+        CancellationToken token = default)
     {
-        var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(100));
-        var ingredients = await FindAllProductsByIdsAsync(productIds, page, size);
-        var recipes = await _recipeService.GetRecipesForIngredients(ingredients, tokenSource.Token);
+        var recipes = await _mediator.Send(new FindRecipesQuery(ingredientIds, max), token);
         return Ok(recipes.Select(r => new GetRecipeDto
                                       {
                                           Name = r.Name,
                                           ImageUrl = r.ImageUrl?.ToString(),
                                           OriginUrl = r.Origin.ToString()
                                       }));
-    }
-
-    private async Task<List<Ingredient>> FindAllProductsByIdsAsync(int[] productIds, int page, int size)
-    {
-        var satisfiedProducts = await _context.Ingredients
-                                              .Where(i => productIds.Contains(i.Id))
-                                              .OrderBy(i => i.Id)
-                                              .Skip(( page - 1 ) * size)
-                                              .Take(size)
-                                              .ToListAsync();
-        return satisfiedProducts
-              .Select(p => new Ingredient(p.Id, p.Name))
-              .ToList();
     }
 }

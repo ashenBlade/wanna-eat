@@ -28,8 +28,11 @@ code {
 }
 
 .food-list-item {
-  cursor: pointer !important;
   display: grid;
   grid-template-columns: 1fr min-content;
   grid-template-rows: 1fr;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
