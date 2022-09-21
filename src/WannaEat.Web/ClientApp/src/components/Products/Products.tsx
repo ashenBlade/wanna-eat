@@ -225,9 +225,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                     </button>
                 </div>
                 <div title={'Что можно выбрать'} className={'grounded p-1 pb-2'}>
-                    <div className={'text-center pb-md-2 pb-1'}>
-                        <span>Нашли</span>
-                    </div>
                     <FoodList onChoose={productOnChoose}
                               foods={products}
                               emptyListPlaceholder={'Здесь появятся найденные продукты'}
@@ -236,7 +233,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                 </div>
                 <hr className={'d-block m-0 d-md-none'}/>
                 <div title={'Что у вас имеется'} className={'grounded p-1 pb-2'}>
-                    <div className="text-center pb-md-2 pb-1"><span>Выбрали</span></div>
                     <FoodList onChoose={selectedProductOnChoose}
                               foods={selectedProducts}
                               additionalAction={{
@@ -255,9 +251,6 @@ const Products: FC<ProductsPageProps> = ({ingredientsRepository, foodService}) =
                     </div>
                     <div title={'Это список найденных рецептов'}
                          className={'grounded p-1 d-flex h-100 pb-2'}>
-                        <div className="text-center pb-md-2 pb-1">
-                            <span>Можно приготовить</span>
-                        </div>
                         <FoodList foods={recipes}
                                   onChoose={redirectToRecipe}
                                   emptyListPlaceholder={recipesListMessage}
