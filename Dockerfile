@@ -16,6 +16,7 @@ COPY ["src/WannaEat.Infrastructure", "WannaEat.Infrastructure"]
 COPY ["src/WannaEat.FoodService.MMenu", "WannaEat.FoodService.MMenu"]
 COPY ["src/WannaEat.FoodService.MZR", "WannaEat.FoodService.MZR"]
 COPY ["src/WannaEat.Web", "WannaEat.Web"]
+COPY ["src/WannaEat.Application", "WannaEat.Application"]
 COPY ["src/WannaEat.sln", "."]
 RUN dotnet restore WannaEat.sln
 
